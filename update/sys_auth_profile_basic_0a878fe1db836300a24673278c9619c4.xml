@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_auth_profile_basic">
+    <sys_auth_profile_basic action="INSERT_OR_UPDATE">
+        <name>BIG-IP</name>
+        <password>MEyi3jQvb+N7MaSa+EyjGA==</password>
+        <sys_class_name>sys_auth_profile_basic</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-01-17 04:07:24</sys_created_on>
+        <sys_id>0a878fe1db836300a24673278c9619c4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>BIG-IP</sys_name>
+        <sys_package display_value="f5CICD" source="x_307333_f5cicd">ed2ad041dbc72300a24673278c961905</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="f5CICD">ed2ad041dbc72300a24673278c961905</sys_scope>
+        <sys_update_name>sys_auth_profile_basic_0a878fe1db836300a24673278c9619c4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-01-17 04:07:24</sys_updated_on>
+        <username>admin</username>
+    </sys_auth_profile_basic>
+</record_update>
