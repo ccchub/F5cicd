@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/v3.7.0/schema/latest/as3-request-schema-3.7.0-7.json",
+  "class": "AS3",
+  "action": "dry-run",
+  "persist": true,
+  "declaration": {
+    "class": "ADC",
+    "schemaVersion": "3.7.0",
+    "id": "Add_Data_Groups",
+    "target": {
+        "hostname": "1.home.lab"
+    },
+    "ADC_Common": {
+      "class": "Tenant",
+      "my_data_group_1": {
+        "template": "generic",
+        "class": "Application",
+        "mydatagroup1": {
+          "class": "Data_Group",
+          "keyDataType": "integer",
+          "records": [
+            {
+              "key": 121212,
+              "value": "Summer"
+            },
+            {
+              "key": 3434,
+              "value": "Internal Field: \"see guide\""
+            }
+          ]
+        }
+      },
+      "my_data_group_2": {
+        "template": "generic",
+        "class": "Application",
+        "mydatagroup2": {
+          "class": "Data_Group",
+          "keyDataType": "integer",
+          "records": [
+            {
+              "key": 121212,
+              "value": "Summer"
+            },
+            {
+              "key": 3434,
+              "value": "Internal Field: \"see guide\""
+            }
+          ]
+        }
+      }
+    }
+  }
+}
