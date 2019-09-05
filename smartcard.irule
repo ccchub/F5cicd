@@ -1,0 +1,19 @@
+when CLIENTSSL_CLIENTCERT {
+  HTTP::release
+  if { [SSL::cert count] < 1 } {
+    reject
+  }
+}
+ 
+when HTTP_REQUEST
+{
+  if { [class match [HTTP::uri] startswith paths_dg } {
+    if { [SSL::cert count] <= 0 } {
+      HTTP::collect
+      SSL::authenticate always
+      SSL::authenticate depth 9
+      SSL::cert mode require
+      SSL::renegotiate
+    }
+  }
+}
