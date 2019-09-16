@@ -1,0 +1,345 @@
+# Create RG and NSG
+
+az network nsg create -g cz-lb-fw-4vnets-2 -n 4vnets-apply-all-nsg --location eastus2
+az network nsg rule create -g cz-lb-fw-4vnets-2 --nsg-name 4vnets-apply-all-nsg -n Allow_All --priority 100 \
+                            --source-address-prefixes 69.251.248.77/32 --source-port-ranges '*' \
+                            --destination-address-prefixes '*' --destination-port-ranges '*' --access Allow \
+                            --protocol '*'
+
+az network nsg create -g cz-lb-fw-4vnets-2 -n 4vnets-apply-all-nsg2 --location eastus2
+az network nsg rule create -g cz-lb-fw-4vnets-2 --nsg-name 4vnets-apply-all-nsg2 -n Allow_All --priority 100 \
+                            --source-address-prefixes 69.251.248.77/32 --source-port-ranges '*' \
+                            --destination-address-prefixes '*' --destination-port-ranges '*' --access Allow \
+                            --protocol '*'
+
+
+
+
+
+# Create vnet D1 and subnets
+
+az network vnet create -g cz-lb-fw-4vnets-2 -n cz-D1 --address-prefix 10.3.0.0/16
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n mgmt --address-prefix 10.3.10.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5-d2 --address-prefix 10.3.20.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5-d3 --address-prefix 10.3.30.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw1-d2 --address-prefix 10.3.40.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5-fw1-d2 --address-prefix 10.3.41.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw2-d2 --address-prefix 10.3.50.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5-fw2-d2 --address-prefix 10.3.51.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw1-d3 --address-prefix 10.3.60.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw2-d3 --address-prefix 10.3.70.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw1-d4 --address-prefix 10.3.80.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw2-d4 --address-prefix 10.3.90.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw1-d5 --address-prefix 10.3.100.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw2-d5 --address-prefix 10.3.110.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5o-d4 --address-prefix 10.3.120.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5o-d5 --address-prefix 10.3.130.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5-internet --address-prefix 10.3.140.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n f5o-internet --address-prefix 10.3.150.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw1-internet --address-prefix 10.3.160.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-D1 -n fw2-internet --address-prefix 10.3.170.0/24 --network-security-group 4vnets-apply-all-nsg
+
+
+
+
+
+# Create interfaces in D1
+
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name F5-T1-mgmt-pip --allocation-method static
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5t1-mgmt --vnet-name cz-D1 --subnet mgmt --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.10.4 --public-ip-address F5-T1-mgmt-pip
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name F5-T2-mgmt-pip --allocation-method static
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5t2-mgmt --vnet-name cz-D1 --subnet mgmt --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.10.5 --public-ip-address F5-T2-mgmt-pip
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5-d2 --vnet-name cz-D1 --subnet f5-d2 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.20.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5-d3 --vnet-name cz-D1 --subnet f5-d3 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.30.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5-fw1-d2 --vnet-name cz-D1 --subnet fw1-d2 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.40.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5-fw2-d2 --vnet-name cz-D1 --subnet fw2-d2 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.50.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5-fw1-d3 --vnet-name cz-D1 --subnet fw1-d3 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.60.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5-fw2-d3 --vnet-name cz-D1 --subnet fw2-d3 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.70.245
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name fw1-pip --allocation-method static
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw1-d2 --vnet-name cz-D1 --subnet fw1-d2 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.40.10 --public-ip-address fw1-pip
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name fw2-pip --allocation-method static
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw2-d2 --vnet-name cz-D1 --subnet fw2-d2 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.50.10 --public-ip-address fw2-pip
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw1-d3 --vnet-name cz-D1 --subnet fw1-d3 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.60.10
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw2-d3 --vnet-name cz-D1 --subnet fw2-d3 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.70.10
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw1-d4 --vnet-name cz-D1 --subnet fw1-d4 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.80.10
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw2-d4 --vnet-name cz-D1 --subnet fw2-d4 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.90.10
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw1-d5 --vnet-name cz-D1 --subnet fw1-d5 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.100.10
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw2-d5 --vnet-name cz-D1 --subnet fw2-d5 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.110.10
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5o-fw1-d4 --vnet-name cz-D1 --subnet fw1-d4 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.80.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5o-fw2-d4 --vnet-name cz-D1 --subnet fw2-d4 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.90.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5o-fw1-d5 --vnet-name cz-D1 --subnet fw1-d5 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.100.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5o-fw2-d5 --vnet-name cz-D1 --subnet fw2-d5 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.110.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5o-d4 --vnet-name cz-D1 --subnet f5o-d4 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.120.245
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5o-d5 --vnet-name cz-D1 --subnet f5o-d5 --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.130.245
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name f5-internet-pip --allocation-method static
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name f5o-internet-pip --allocation-method static
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5-internet --vnet-name cz-D1 --subnet f5-internet --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.140.245 --public-ip-address f5-internet-pip
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name f5o-internet --vnet-name cz-D1 --subnet f5o-internet --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.150.245 --public-ip-address f5o-internet-pip
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw1-internet --vnet-name cz-D1 --subnet fw1-internet --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.160.10
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name fw2-internet --vnet-name cz-D1 --subnet fw2-internet --network-security-group 4vnets-apply-all-nsg --private-ip-address 10.3.170.10
+
+
+
+#T1 F5 build
+
+az vm image accept-terms --urn f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest
+
+az vm create --image f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest --resource-group cz-lb-fw-4vnets-2 --name "F5-T1" --admin-username azureuser --authentication-type ssh --size Standard_D4_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics f5t1-mgmt f5-fw1-d3 f5-fw1-d2 f5-fw2-d2 f5-fw2-d3 f5-d2 f5-d3 f5-internet
+
+# FW builds
+az vm create --image ubuntults --resource-group cz-lb-fw-4vnets-2 --name FW1 --admin-username azureuser --authentication-type ssh --size Standard_D4_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics fw1-d2 fw1-d3 fw1-d4 fw1-d5 fw1-internet
+
+##az vm nic add --resource-group cz-lb-fw-4vnets-2 --vm-name FW1 --nics fw1-internet
+
+az vm create --image ubuntults --resource-group cz-lb-fw-4vnets-2 --name FW2 --admin-username azureuser --authentication-type ssh --size Standard_D4_v2	--ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics fw2-d2 fw2-d3 fw2-d4 fw2-d5 fw2-internet
+
+##az vm nic add --resource-group cz-lb-fw-4vnets-2 --vm-name FW2 --nics fw2-internet
+
+#T2 F5 build
+
+az vm image accept-terms --urn f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest
+
+az vm create --image f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest --resource-group cz-lb-fw-4vnets-2 --name "F5-T2" --admin-username azureuser --authentication-type ssh --size Standard_D4_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics f5t2-mgmt f5o-fw1-d5 f5o-fw1-d4 f5o-fw2-d4 f5o-fw2-d5 f5o-d4 f5o-d5 f5o-internet
+
+# Update FW nics to enable forwarding
+
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5-fw1-d3 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5-fw1-d2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5-fw2-d2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5-fw2-d3 --ip-forwarding true
+
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw1-d2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw1-d3 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw1-d4 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw1-d5 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw1-internet --ip-forwarding true
+
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5-d2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5-d3 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5-internet --ip-forwarding true
+
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5o-fw1-d5 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5o-fw1-d4 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5o-fw2-d4 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5o-fw2-d5 --ip-forwarding true
+
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw2-d2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw2-d3 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw2-d4 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw2-d5 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name fw2-internet --ip-forwarding true
+
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5o-d4 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5o-d5 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-2 --name f5o-internet --ip-forwarding true
+
+
+# Create d2, d3, d4 and d5
+
+az network vnet create -g cz-lb-fw-4vnets-2 -n cz-d2 --address-prefix 172.16.20.0/24
+az network vnet create -g cz-lb-fw-4vnets-2 -n cz-d3 --address-prefix 172.16.30.0/24
+az network vnet create -g cz-lb-fw-4vnets-2 -n cz-d4 --address-prefix 172.16.40.0/24
+az network vnet create -g cz-lb-fw-4vnets-2 -n cz-d5 --address-prefix 172.16.50.0/24
+
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-d2 -n d2-subnet --address-prefix 172.16.20.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-d3 -n d3-subnet --address-prefix 172.16.30.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-d4 -n d4-subnet --address-prefix 172.16.40.0/24 --network-security-group 4vnets-apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-4vnets-2 --vnet-name cz-d5 -n d5-subnet --address-prefix 172.16.50.0/24 --network-security-group 4vnets-apply-all-nsg
+
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name d2-vm-pub-ip --allocation-method static
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name d3-vm-pub-ip --allocation-method static
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name d4-vm-pub-ip --allocation-method static
+az network public-ip create --resource-group cz-lb-fw-4vnets-2 --name d5-vm-pub-ip --allocation-method static
+
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name d2-ext --vnet-name cz-d2 --subnet d2-subnet --network-security-group 4vnets-apply-all-nsg --private-ip-address 172.16.20.4 --public-ip-address d2-vm-pub-ip
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name d3-ext --vnet-name cz-d3 --subnet d3-subnet --network-security-group 4vnets-apply-all-nsg --private-ip-address 172.16.30.4 --public-ip-address d3-vm-pub-ip
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name d4-ext --vnet-name cz-d4 --subnet d4-subnet --network-security-group 4vnets-apply-all-nsg --private-ip-address 172.16.40.4 --public-ip-address d4-vm-pub-ip
+az network nic create --resource-group cz-lb-fw-4vnets-2 --name d5-ext --vnet-name cz-d5 --subnet d5-subnet --network-security-group 4vnets-apply-all-nsg --private-ip-address 172.16.50.4 --public-ip-address d5-vm-pub-ip
+
+az vm create --image ubuntults --resource-group cz-lb-fw-4vnets-2 --name d2-vm --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics d2-ext
+
+az vm create --image ubuntults --resource-group cz-lb-fw-4vnets-2 --name d3-vm --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics d3-ext
+
+az vm create --image ubuntults --resource-group cz-lb-fw-4vnets-2 --name d4-vm --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics d4-ext
+
+az vm create --image ubuntults --resource-group cz-lb-fw-4vnets-2 --name d5-vm --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics d5-ext
+
+# Create peerings
+
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d1_to_d2_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d2 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d1_to_d3_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d3 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d1_to_d4_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d4 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d1_to_d5_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d5 --allow-vnet-access --allow-forwarded-traffic
+
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d2_to_d1_peering --vnet-name cz-d2 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d3_to_d1_peering --vnet-name cz-d3 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d4_to_d1_peering --vnet-name cz-d4 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-2 -n d5_to_d1_peering --vnet-name cz-d5 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-2/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+
+# udr-d2
+az network route-table create --name udr-d2 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d2 --name d2-subnet --route-table udr-d2
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-d2 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.20.245
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-d2 --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+
+
+# udr-d3
+az network route-table create --name udr-d3 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d3 --name d3-subnet --route-table udr-d3
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-d3 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.30.245
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-d3 --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+
+# udr-fw1-d2
+az network route-table create --name udr-fw1-d2 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name fw1-d2 --route-table udr-fw1-d2
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-d2 --name fw1_d3 --next-hop-type VirtualAppliance --address-prefix 172.16.30.0/24 --next-hop-ip-address 10.3.40.10
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-d2 --name fw1_d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.40.245
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-d2 --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-d2 --name internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.40.10
+
+
+# udr-fw2-d2
+az network route-table create --name udr-fw2-d2 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name fw2-d2 --route-table udr-fw2-d2
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw2-d2 --name fw2_d3 --next-hop-type VirtualAppliance --address-prefix 172.16.30.0/24 --next-hop-ip-address 10.3.50.10
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw2-d2 --name fw2_d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.50.245
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw2-d2 --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+
+# udr-f5-fw1-d2
+az network route-table create --name udr-f5-fw1-d2 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name f5-fw1-d2 --route-table udr-f5-fw1-d2
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-f5-fw1-d2 --name d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.40.245
+
+
+
+
+
+
+
+
+# udr-fw1-d3
+az network route-table create --name udr-fw1-d3 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name fw1-d3 --route-table udr-fw1-d3
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-d3 --name d3 --next-hop-type VirtualAppliance --address-prefix 172.16.30.0/24 --next-hop-ip-address 10.3.60.245
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-d3 --name d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.60.10
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-d3 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.60.10
+
+
+# udr-fw2-d3
+az network route-table create --name udr-fw2-d3 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name fw2-d3 --route-table udr-fw2-d3
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw2-d3 --name d3 --next-hop-type VirtualAppliance --address-prefix 172.16.30.0/24 --next-hop-ip-address 10.3.70.245
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw2-d3 --name d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.70.10
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw2-d3 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.70.10
+
+
+
+
+
+# udr-fw1-internet
+az network route-table create --name udr-fw1-internet --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name fw1-internet --route-table udr-fw1-internet
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw1-internet --name internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.140.245
+
+# udr-fw2-internet
+az network route-table create --name udr-fw2-internet --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name fw2-internet --route-table udr-fw2-internet
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-fw2-internet --name internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.20.245
+
+
+
+# udr-f5-internet-fw1
+az network route-table create --name udr-f5-internet-fw1 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name f5-internet --route-table udr-f5-internet-fw1
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-f5-internet-fw1 --name d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.160.10
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-f5-internet-fw1 --name d3 --next-hop-type VirtualAppliance --address-prefix 172.16.30.0/24 --next-hop-ip-address 10.3.160.10
+
+
+
+
+
+# udr-f5-d2-fw2
+az network route-table create --name udr-f5-d2-fw2 --resource-group cz-lb-fw-4vnets-2 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-2 --vnet-name cz-d1 --name f5-d2 --route-table udr-f5-d2-fw2
+az network route-table route create --resource-group cz-lb-fw-4vnets-2 --route-table-name udr-f5-d2-fw2 --name d2_to_4 --next-hop-type VirtualAppliance --address-prefix 172.16.0.0/16 --next-hop-ip-address 10.3.170.10
+
+
+
+
+
+
+
+
+# F5-T1
+
+create net vlan f5-fw1-d3
+modify net vlan f5-fw1-d3 interfaces add { 1.1 }
+
+create net vlan f5-fw1-d2
+modify net vlan f5-fw1-d2 interfaces add { 1.2 }
+
+create net vlan f5-fw2-d2
+modify net vlan f5-fw2-d2 interfaces add { 1.3 }
+
+create net vlan f5-fw2-d3
+modify net vlan f5-fw2-d3 interfaces add { 1.4 }
+
+create net vlan f5-d2
+modify net vlan f5-d2 interfaces add { 1.5 }
+
+create net vlan f5-d3
+modify net vlan f5-d3 interfaces add { 1.6 }
+
+create net vlan f5-internet
+modify net vlan f5-internet interfaces add { 1.7 }
+
+create net route-domain 2
+create net route-domain 3
+
+modify net route-domain 2 vlans add { f5-d2 f5-fw1-d2 f5-fw2-d2 }
+modify net route-domain 3 vlans add { f5-d3 f5-fw1-d3 f5-fw2-d3 }
+
+create net self 10.3.40.245%2 { address 10.3.40.245%2/24 allow-service default vlan f5-fw1-d2 }
+create net self 10.3.50.245%2 { address 10.3.50.245%2/24 allow-service default vlan f5-fw2-d2 }
+create net self 10.3.20.245%2 { address 10.3.20.245%2/24 allow-service default vlan f5-d2 }
+
+create net self 10.3.60.245%3 { address 10.3.60.245%3/24 allow-service default vlan f5-fw1-d3 }
+create net self 10.3.70.245%3 { address 10.3.70.245%3/24 allow-service default vlan f5-fw2-d3 }
+create net self 10.3.30.245%3 { address 10.3.30.245%3/24 allow-service default vlan f5-d3 }
+
+# F5-T2
+
+create net vlan f5o-fw1-d5
+modify net vlan f5o-fw1-d5 interfaces add { 1.1 }
+
+create net vlan f5o-fw1-d4
+modify net vlan f5o-fw1-d4 interfaces add { 1.2 }
+
+create net vlan f5o-fw2-d4
+modify net vlan f5o-fw2-d4 interfaces add { 1.3 }
+
+create net vlan f5o-fw2-d5
+modify net vlan f5o-fw2-d5 interfaces add { 1.4 }
+
+create net vlan f5o-d4
+modify net vlan f5o-d4 interfaces add { 1.5 }
+
+create net vlan f5o-d5
+modify net vlan f5o-d5 interfaces add { 1.6 }
+
+create net vlan f5o-internet
+modify net vlan f5o-internet interfaces add { 1.7 }
+
+create net route-domain 4
+create net route-domain 5
+
+modify net route-domain 4 vlans add { f5o-d4 f5o-fw1-d4 f5o-fw2-d4 }
+modify net route-domain 5 vlans add { f5o-d5 f5o-fw1-d5 f5o-fw2-d5 }
+
+create net self 10.3.80.245%4 { address 10.3.80.245%4/24 allow-service default vlan f5o-fw1-d4 }
+create net self 10.3.90.245%4 { address 10.3.90.245%4/24 allow-service default vlan f5o-fw2-d4 }
+create net self 10.3.120.245%4 { address 10.3.120.245%4/24 allow-service default vlan f5o-d4 }
+
+create net self 10.3.100.245%5 { address 10.3.100.245%5/24 allow-service default vlan f5o-fw1-d5 }
+create net self 10.3.110.245%5 { address 10.3.110.245%5/24 allow-service default vlan f5o-fw2-d5 }
+create net self 10.3.130.245%5 { address 10.3.130.245%5/24 allow-service default vlan f5o-d5 }

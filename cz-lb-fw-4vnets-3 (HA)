@@ -1,0 +1,176 @@
+
+
+
+
+
+# Create peerings
+
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d1_to_d2_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d2 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d1_to_d3_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d3 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d1_to_d4_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d4 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d1_to_d5_peering --vnet-name cz-d1 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d5 --allow-vnet-access --allow-forwarded-traffic
+
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d2_to_d1_peering --vnet-name cz-d2 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d3_to_d1_peering --vnet-name cz-d3 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d4_to_d1_peering --vnet-name cz-d4 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create -g cz-lb-fw-4vnets-3 -n d5_to_d1_peering --vnet-name cz-d5 --remote-vnet-id /subscriptions/97f6353e-4c7f-410b-b34e-a966b584fc75/resourceGroups/cz-lb-fw-4vnets-3/providers/Microsoft.Network/virtualNetworks/cz-d1 --allow-vnet-access --allow-forwarded-traffic
+
+
+
+
+az network public-ip create --resource-group cz-lb-fw-4vnets-3 --name f5-internet1-pip --allocation-method static
+az network public-ip create --resource-group cz-lb-fw-4vnets-3 --name f5-internet2-pip --allocation-method static
+az network public-ip create --resource-group cz-lb-fw-4vnets-3 --name f5-internetF-pip --allocation-method static
+
+
+
+
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-ext0 --name ipconfig2 --private-ip-address 10.3.60.146
+
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-int0 --name ipconfig2 --private-ip-address 10.3.40.146
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-int0 --name vip1 --private-ip-address 10.3.40.10
+
+
+
+
+
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic10 --name ipconfig --private-ip-address 10.3.140.144
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic10 --name ipconfig2 --private-ip-address 10.3.140.146
+
+
+
+
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic20 --name ipconfig --private-ip-address 10.3.20.144
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic20 --name ipconfig2 --private-ip-address 10.3.20.146
+
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic30 --name ipconfig --private-ip-address 10.3.50.144
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic30 --name ipconfig2 --private-ip-address 10.3.50.146
+
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic40 --name ipconfig --private-ip-address 10.3.70.144
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic40 --name ipconfig2 --private-ip-address 10.3.70.146
+
+
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic11 --name ipconfig --private-ip-address 10.3.140.145
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic21 --name ipconfig --private-ip-address 10.3.20.145
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic31 --name ipconfig --private-ip-address 10.3.50.145
+az network nic ip-config update --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-addtlnic41 --name ipconfig --private-ip-address 10.3.70.145
+
+# Change udr's
+
+az network route-table route update --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-d2 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.20.146
+
+
+
+# f5-ha-0[01] config (post ARM template)
+
+delete net self external_float
+delete net self internal_float
+delete net self self_2nic
+delete net self self_3nic
+
+modify net route-domain 2 vlans add { internal fw2-d2 }
+modify net route-domain 3 vlans add { external fw2-d3 }
+
+create net self 10.3.40.144%2 { address 10.3.40.144%2/24 allow-service default vlan internal }
+create net self 10.3.40.146%2 { address 10.3.40.146%2/24 allow-service default vlan internal traffic-group traffic-group-1}
+
+create net self 10.3.50.144%2 { address 10.3.50.144%2/24 allow-service default vlan fw2-d2 }
+create net self 10.3.50.146%2 { address 10.3.50.146%2/24 allow-service default vlan fw2-d2 traffic-group traffic-group-1}
+
+delete net self 10.3.60.144
+delete net self 10.3.60.146
+
+create net self 10.3.60.144%3 { address 10.3.60.144%3/24 allow-service default vlan external }
+create net self 10.3.60.146%3 { address 10.3.60.146%3/24 allow-service default vlan external traffic-group traffic-group-1}
+
+create net self 10.3.70.144%3 { address 10.3.70.144%3/24 allow-service default vlan fw2-d3 }
+create net self 10.3.70.146%3 { address 10.3.70.146%3/24 allow-service default vlan fw2-d3 traffic-group traffic-group-1}
+
+create net self 10.3.140.144 { address 10.3.140.144/24 allow-service default vlan f5-internet }
+create net self 10.3.140.146 { address 10.3.140.146/24 allow-service default vlan f5-internet traffic-group traffic-group-1}
+
+create net self 10.3.20.144 { address 10.3.20.144/24 allow-service default vlan f5-d2 }
+create net self 10.3.20.146 { address 10.3.20.146/24 allow-service default vlan f5-d2 traffic-group traffic-group-1}
+
+create net vlan f5-internet
+modify net vlan f5-d3 interfaces add { 1.3 }
+
+# Create internet self IP
+create net self 10.3.20.145 { address 10.3.20.145/24 allow-service default vlan f5-d2 }
+create net self 10.3.140.145 { address 10.3.140.145/24 allow-service default vlan f5-internet }
+create net self 10.3.40.145%2 { address 10.3.40.145%2/24 allow-service default vlan internal }
+create net self 10.3.50.145%2 { address 10.3.50.145%2/24 allow-service default vlan fw2-d2 }
+create net self 10.3.60.145%3 { address 10.3.60.145%3/24 allow-service default vlan external }
+create net self 10.3.70.145%3 { address 10.3.70.145%3/24 allow-service default vlan fw2-d3 }
+
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-d2 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.40.146
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-d3 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.70.146
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-f5-fw1-d2 --name d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.40.146
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-fw1-d3 --name d3 --next-hop-type VirtualAppliance --address-prefix 172.16.30.0/24 --next-hop-ip-address 10.3.60.146
+
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-fw1-internet --name internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.140.146
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-fw2-internet --name internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.20.146
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-fw2-d2 --name fw2_d2 --next-hop-type VirtualAppliance --address-prefix 172.16.20.0/24 --next-hop-ip-address 10.3.50.146
+
+az network vnet subnet create -g cz-lb-fw-4vnets-3 --vnet-name cz-D1 -n f5-fw2-d3 --address-prefix 10.3.71.0/24 --network-security-group 4vnets-apply-all-nsg
+
+# udr-f5-fw2-d3
+az network route-table create --name udr-f5-fw2-d3 --resource-group cz-lb-fw-4vnets-3 --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-4vnets-3 --vnet-name cz-d1 --name f5-fw2-d3 --route-table udr-f5-fw2-d3
+az network route-table route create --resource-group cz-lb-fw-4vnets-3 --route-table-name udr-f5-fw2-d3 --name d3 --next-hop-type VirtualAppliance --address-prefix 172.16.30.0/24 --next-hop-ip-address 10.3.70.146
+
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-int0 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-int1 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-ext0 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-ext1 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic10 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic11 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic20 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic21 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic30 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic31 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic40 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-4vnets-3 --name f5-ha-addtlnic41 --ip-forwarding true
+
+
+
+
+
+
+
+
+
+**************************
+
+
+
+# FW 1
+
+route add -net 172.16.20.0/24 gw 10.3.41.1
+route add -net 172.16.30.0/24 gw 10.3.60.1
+route add -host 69.251.248.77/32 gw 10.3.41.1
+route add -net 0.0.0.0/0 gw 10.3.160.1
+route delete -net 0.0.0.0/0 gw 10.3.41.1
+
+# FW 2
+
+route add -net 172.16.20.0/24 gw 10.3.50.1
+route add -net 172.16.30.0/24 gw 10.3.71.1
+route add -host 69.251.248.77/32 gw 10.3.50.1
+route add -net 0.0.0.0/0 gw 10.3.160.1
+route delete -net 0.0.0.0/0 gw 10.3.50.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+az network nic ip-config delete --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-int1 --name ipconfig2
+az network nic ip-config create --resource-group cz-lb-fw-4vnets-3 --nic-name f5-ha-int0 --name ipconfig2 --private-ip-address 10.3.40.146

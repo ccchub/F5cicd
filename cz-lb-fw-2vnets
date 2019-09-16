@@ -1,0 +1,273 @@
+
+# Create RG and NSG
+
+az network nsg create -g cz-lb-fw-2vnets -n apply-all-nsg --location eastus2
+az network nsg rule create -g cz-lb-fw-2vnets --nsg-name apply-all-nsg -n Allow_All --priority 100 \
+                            --source-address-prefixes 69.251.248.77/32 --source-port-ranges '*' \
+                            --destination-address-prefixes '*' --destination-port-ranges '*' --access Allow \
+                            --protocol '*'
+
+# Create vnet B1 and subnets
+
+az network vnet create -g cz-lb-fw-2vnets -n cz-B1 --address-prefix 10.3.0.0/16
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n mgmt --address-prefix 10.3.10.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n f5-front --address-prefix 10.3.20.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n fw1-front --address-prefix 10.3.30.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n fw2-front --address-prefix 10.3.40.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n fw1-back --address-prefix 10.3.50.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n fw2-back --address-prefix 10.3.60.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n fw1-back2 --address-prefix 10.3.70.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n fw2-back2 --address-prefix 10.3.80.0/24 --network-security-group apply-all-nsg
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B1 -n f5o-back --address-prefix 10.3.90.0/24 --network-security-group apply-all-nsg
+
+
+az network public-ip create --resource-group cz-lb-fw-2vnets --name Client-pub-ip
+az network nic create --resource-group cz-lb-fw-2vnets --name c-ext --vnet-name cz-B1 --subnet f5-front --network-security-group apply-all-nsg --private-ip-address 10.3.20.4 --public-ip-address Client-pub-ip
+
+az network public-ip create --resource-group cz-lb-fw-2vnets --name F5-T1-mgmt-ip
+az network nic create --resource-group cz-lb-fw-2vnets --name f5t1-mgmt --vnet-name cz-B1 --subnet mgmt --network-security-group apply-all-nsg --private-ip-address 10.3.10.4 --public-ip-address F5-T1-mgmt-ip
+
+az network nic create --resource-group cz-lb-fw-2vnets --name f5-ext --vnet-name cz-B1 --subnet f5-front --network-security-group apply-all-nsg --private-ip-address 10.3.20.245
+
+az network nic create --resource-group cz-lb-fw-2vnets --name f51-int --vnet-name cz-B1 --subnet fw1-front --network-security-group apply-all-nsg --private-ip-address 10.3.30.245
+
+az network nic create --resource-group cz-lb-fw-2vnets --name f52-int --vnet-name cz-B1 --subnet fw2-front --network-security-group apply-all-nsg --private-ip-address 10.3.40.245
+
+az network public-ip create --resource-group cz-lb-fw-2vnets --name fw1-pub-ip
+
+az network nic create --resource-group cz-lb-fw-2vnets --name fw1-ext --vnet-name cz-B1 --subnet fw1-front --network-security-group apply-all-nsg --private-ip-address 10.3.30.10 --public-ip-address fw1-pub-ip
+
+az network public-ip create --resource-group cz-lb-fw-2vnets --name fw2-pub-ip
+
+az network nic create --resource-group cz-lb-fw-2vnets --name fw2-ext --vnet-name cz-B1 --subnet fw2-front --network-security-group apply-all-nsg --private-ip-address 10.3.40.10 --public-ip-address fw2-pub-ip
+
+az network nic create --resource-group cz-lb-fw-2vnets --name fw1-int --vnet-name cz-B1 --subnet fw1-back --network-security-group apply-all-nsg --private-ip-address 10.3.50.10
+az network nic create --resource-group cz-lb-fw-2vnets --name fw1-int2 --vnet-name cz-B1 --subnet fw1-back2 --network-security-group apply-all-nsg --private-ip-address 10.3.70.10
+
+az network nic create --resource-group cz-lb-fw-2vnets --name fw2-int --vnet-name cz-B1 --subnet fw2-back --network-security-group apply-all-nsg --private-ip-address 10.3.60.10
+az network nic create --resource-group cz-lb-fw-2vnets --name fw2-int2 --vnet-name cz-B1 --subnet fw2-back2 --network-security-group apply-all-nsg --private-ip-address 10.3.80.10
+
+az network public-ip create --resource-group cz-lb-fw-2vnets --name F5-T2-mgmt-ip
+az network nic create --resource-group cz-lb-fw-2vnets --name f5t2-mgmt --vnet-name cz-B1 --subnet mgmt --network-security-group apply-all-nsg --private-ip-address 10.3.10.5 --public-ip-address F5-T2-mgmt-ip
+
+az network nic create --resource-group cz-lb-fw-2vnets --name f5o1-ext --vnet-name cz-B1 --subnet fw1-back --network-security-group apply-all-nsg --private-ip-address 10.3.50.245
+az network nic create --resource-group cz-lb-fw-2vnets --name f5o1-ext2 --vnet-name cz-B1 --subnet fw1-back2 --network-security-group apply-all-nsg --private-ip-address 10.3.70.245
+
+az network nic create --resource-group cz-lb-fw-2vnets --name f5o2-ext --vnet-name cz-B1 --subnet fw2-back --network-security-group apply-all-nsg --private-ip-address 10.3.60.245
+az network nic create --resource-group cz-lb-fw-2vnets --name f5o2-ext2 --vnet-name cz-B1 --subnet fw2-back2 --network-security-group apply-all-nsg --private-ip-address 10.3.80.245
+
+az network nic create --resource-group cz-lb-fw-2vnets --name f5o-int --vnet-name cz-B1 --subnet f5o-back --network-security-group apply-all-nsg --private-ip-address 10.3.90.245
+
+## az vm nic add --resource-group cz-lb-fw-2vnets --vm-name F5-T2 --nics f5o-int
+
+
+
+#T1 F5 build
+
+az vm image accept-terms --urn f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest
+
+az vm create --image f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest --resource-group cz-lb-fw-2vnets --name "F5-T1" --admin-username azureuser --authentication-type ssh --size Standard_DS3_v2_Promo --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics f5t1-mgmt f5-ext f51-int f52-int
+
+# FW builds
+az vm create --image ubuntults --resource-group cz-lb-fw-2vnets --name FW1 --admin-username azureuser --authentication-type ssh --size Standard_B2s --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics fw1-ext fw1-int fw1-int2
+
+az vm create --image ubuntults --resource-group cz-lb-fw-2vnets --name FW2 --admin-username azureuser --authentication-type ssh --size Standard_B2s --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics fw2-ext fw2-int fw2-int2
+
+#T2 F5 build
+
+az vm image accept-terms --urn f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest
+
+az vm create --image f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest --resource-group cz-lb-fw-2vnets --name "F5-T2" --admin-username azureuser --authentication-type ssh --size Standard_DS4_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics f5t2-mgmt f5o1-ext f5o1-ext2 f5o2-ext f5o2-ext2
+
+#Client build
+
+az vm create --image ubuntults --resource-group cz-lb-fw-2vnets --name Client --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics c-ext
+
+# Update FW nics to enable forwarding
+
+az network nic update --resource-group cz-lb-fw-2vnets --name f51-int --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name f52-int --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name fw1-ext --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name fw1-int --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name fw1-int2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name fw2-ext --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name fw2-int --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name fw2-int2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name f5o1-ext2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name f5o1-ext --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name f5o2-ext2 --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name f5o2-ext --ip-forwarding true
+az network nic update --resource-group cz-lb-fw-2vnets --name f5o-int --ip-forwarding true
+
+
+# Create vnet B2 and subnet
+
+az network vnet create -g cz-lb-fw-2vnets -n cz-B2 --address-prefix 192.168.100.0/24
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B2 -n b2-subnet --address-prefix 192.168.100.0/24 --network-security-group apply-all-nsg
+
+# Create B2-VM
+
+az network public-ip create --resource-group cz-lb-fw-2vnets --name b2-vm-pub-ip
+az network nic create --resource-group cz-lb-fw-2vnets --name b2-ext --vnet-name cz-B2 --subnet b2-subnet --network-security-group apply-all-nsg --private-ip-address 192.168.100.4 --public-ip-address b2-vm-pub-ip
+az vm create --image ubuntults --resource-group cz-lb-fw-2vnets --name b2-vm --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics b2-ext
+
+# Create vnet B3 and subnet
+
+az network vnet create -g cz-lb-fw-2vnets -n cz-B3 --address-prefix 172.16.200.0/24
+az network vnet subnet create -g cz-lb-fw-2vnets --vnet-name cz-B3 -n b3-subnet --address-prefix 172.16.200.0/24 --network-security-group apply-all-nsg
+
+# Create B3-VM
+
+az network public-ip create --resource-group cz-lb-fw-2vnets --name b3-vm-pub-ip
+az network nic create --resource-group cz-lb-fw-2vnets --name b3-ext --vnet-name cz-B3 --subnet b3-subnet --network-security-group apply-all-nsg --private-ip-address 172.16.200.4 --public-ip-address b3-vm-pub-ip
+az vm create --image ubuntults --resource-group cz-lb-fw-2vnets --name b3-vm --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics b3-ext
+
+# Create vnet peering
+
+# Create route-tables, associate to subnets and create routes
+
+## udr-b2-outbound
+az network route-table create --name udr-b2-outbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B2 --name b2-subnet --route-table udr-b2-outbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-b2-outbound --name b2_to_b3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.50.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-b2-outbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+
+## udr-b3-outbound
+az network route-table create --name udr-b3-outbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B3 --name b3-subnet --route-table udr-b3-outbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-b3-outbound --name b3_to_b2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.90.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-b3-outbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+
+## udr-fw2-b3
+az network route-table create --name udr-fw2-b3 --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B1 --name fw2-back2 --route-table udr-fw2-b3
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-b3 --name b2_to_b3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.80.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-b3 --name b3_to_b2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.80.10
+
+## udr-fw2-b2
+az network route-table create --name udr-fw2-b2 --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B1 --name fw2-back --route-table udr-fw2-b2
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-b2 --name b2_to_b3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.60.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-b2 --name b3_to_b2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.60.245
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## udr-fw1-inbound
+az network route-table create --name udr-fw1-inbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B1 --name fw1-front --route-table udr-fw1-inbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-inbound --name fw1_toServer --next-hop-type VirtualAppliance --address-prefix 10.3.70.0/24 --next-hop-ip-address 10.3.30.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-inbound --name server_return_fw1 --next-hop-type VirtualAppliance --address-prefix 10.3.20.0/24 --next-hop-ip-address 10.3.30.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-inbound --name a2_to_a3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.30.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-inbound --name a3_to_a2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.30.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-inbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-inbound --name Internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.30.245
+
+## udr-fw2-inbound
+az network route-table create --name udr-fw2-inbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B1 --name fw2-front --route-table udr-fw2-inbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-inbound --name fw2_toServer --next-hop-type VirtualAppliance --address-prefix 10.3.70.0/24 --next-hop-ip-address 10.3.40.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-inbound --name server_return_fw2 --next-hop-type VirtualAppliance --address-prefix 10.3.20.0/24 --next-hop-ip-address 10.3.40.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-inbound --name a2_to_a3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.40.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-inbound --name a3_to_a2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.40.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-inbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-inbound --name Internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.40.245
+
+
+
+## udr-fw1-f5t2
+az network route-table create --name udr-fw1-f5t2 --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B1 --name fw1-back --route-table udr-fw1-f5t2
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-f5t2 --name post_fw1_toServer --next-hop-type VirtualAppliance --address-prefix 10.3.70.0/24 --next-hop-ip-address 10.3.50.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-f5t2 --name server_return_fw1 --next-hop-type VirtualAppliance --address-prefix 10.3.20.0/24 --next-hop-ip-address 10.3.50.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-f5t2 --name a2_to_a3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.50.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-f5t2 --name a3_to_a2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.50.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-f5t2 --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-f5t2 --name Internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.50.10
+
+## udr-fw2-f5t2
+az network route-table create --name udr-fw2-f5t2 --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B1 --name fw2-back --route-table udr-fw2-f5t2
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-f5t2 --name post_fw2_toServer --next-hop-type VirtualAppliance --address-prefix 10.3.70.0/24 --next-hop-ip-address 10.3.60.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-f5t2 --name server_return_fw2 --next-hop-type VirtualAppliance --address-prefix 10.3.20.0/24 --next-hop-ip-address 10.3.60.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-f5t2 --name a2_to_a3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.60.10
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-f5t2 --name a3_to_a2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.60.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-f5t2 --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-f5t2 --name Internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.60.10
+
+## udr-server-outbound
+az network route-table create --name udr-server-outbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-B1 --name server-subnet --route-table udr-server-outbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-server-outbound --name server_to_client --next-hop-type VirtualAppliance --address-prefix 10.3.20.0/24 --next-hop-ip-address 10.3.70.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-server-outbound --name server_to_a3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.70.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-server-outbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-server-outbound --name Internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.70.245
+
+## udr-a2client-outbound
+az network route-table create --name udr-a2client-outbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-A2 --name a2-client --route-table udr-a2client-outbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a2client-outbound --name a2_to_a3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.70.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a2client-outbound --name a2_to_client --next-hop-type VirtualAppliance --address-prefix 10.3.20.0/24 --next-hop-ip-address 10.3.70.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a2client-outbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a2client-outbound --name Internet --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.70.245
+
+
+
+
+
+
+
+
+
+
+az network route-table create --name udr-fw2-outbound --resource-group cz-lb-fw-2vnets --location eastus2
+
+
+
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-in_out_bound --name inbound-fw1 --next-hop-type VirtualAppliance --address-prefix 10.3.70.0/24 --next-hop-ip-address 10.3.30.10
+
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw1-in_out_bound --name outbound-fw1 --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.50.10
+
+
+az network route-table create --name udr-fw2-in_out_bound --resource-group cz-lb-fw-2vnets --location eastus2
+
+
+
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-fw2-in_out_bound --name outbound-fw1 --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.3.50.10
+
+
+
+#A3
+az network public-ip create --resource-group cz-lb-fw-2vnets --name a3-server-pub-ip
+az network nic create --resource-group cz-lb-fw-2vnets --name a3-s-ext --vnet-name cz-A3 --subnet a3-server --network-security-group apply-all-nsg --private-ip-address 172.16.200.4 --public-ip-address a3-server-pub-ip
+az vm create --image ubuntults --resource-group cz-lb-fw-2vnets --name A3-Server --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtQiakawV5Co9x9gyf1koAfWDn+SRwuaNmnPJdOKxxEOJjP7pCUgm+PYj8Qe9nK0xOw5vVd/MaxY64hAWu4impBb00xaRT3ZM4SBRN3p8dTYNXTKY1J7WpchI1akdhKBIrBMl3mGgBQvptZuxcSmVwvakwRu5nRgr1EhnG4+YdqsZA+J+08sWCJtew6dMxeP4ZmwQNbTIrJarPvdr+BU+8oXZE5qSaUUMfYZxWVTbDQMkZe9/1GFKfGKP6GwdZiwsiFoQbhFCtAhZJA6gcoPtgKw3BsTP9CTR8UjACln/zARLtNx2bmTNmkRlDC9OCZGBL/IYyI46GR64hs/0KGtg1 chzhang@mac" --nics a3-s-ext
+
+#UDR A2
+az network route-table create --name udr-a2client-outbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-A2 --name a2-client --route-table udr-a2client-outbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a2client-outbound --name a2_to_a3 --next-hop-type VirtualAppliance --address-prefix 172.16.200.0/24 --next-hop-ip-address 10.3.70.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a2client-outbound --name a2_to_client --next-hop-type VirtualAppliance --address-prefix 10.3.20.0/24 --next-hop-ip-address 10.3.70.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a2client-outbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+
+#UDR A3
+az network route-table create --name udr-a3server-outbound --resource-group cz-lb-fw-2vnets --location eastus2
+az network vnet subnet update --resource-group cz-lb-fw-2vnets --vnet-name cz-A3 --name a3-server --route-table udr-a3server-outbound
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a3server-outbound --name a3_to_a2 --next-hop-type VirtualAppliance --address-prefix 192.168.100.0/24 --next-hop-ip-address 10.3.20.245
+az network route-table route create --resource-group cz-lb-fw-2vnets --route-table-name udr-a3server-outbound --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32

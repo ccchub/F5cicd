@@ -1,0 +1,254 @@
+# Create RG and NSG
+
+az group create -l eastus2 -n cz-SSLO
+
+az network nsg create -g cz-SSLO -n cz-SSLO-nsg
+az network nsg create -g cz-SSLO -n cz-mgmt-nsg
+
+
+az network nsg rule create -g cz-SSLO --nsg-name cz-SSLO-nsg -n Allow_All --priority 100 \
+                            --source-address-prefixes '*' --source-port-ranges '*' \
+                            --destination-address-prefixes '*' --destination-port-ranges '*' --access Allow \
+                            --protocol '*'
+
+az network nsg rule create -g cz-SSLO --nsg-name cz-mgmt-nsg -n Allow_All --priority 100 \
+                            --source-address-prefixes '69.251.248.77/32' --source-port-ranges '*' \
+                            --destination-address-prefixes '*' --destination-port-ranges '*' --access Allow \
+                            --protocol '*'
+
+
+az network vnet create -g cz-SSLO -n cz-a1 --address-prefix 10.0.0.0/16
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n Mgmt --address-prefix 10.0.0.0/24 --network-security-group cz-mgmt-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n Client --address-prefix 10.0.10.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n Outbound --address-prefix 10.0.20.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n In --address-prefix 10.0.30.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n Out --address-prefix 10.0.40.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n LB-to-svc1 --address-prefix 10.0.50.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n LB-to-svc2 --address-prefix 10.0.60.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n LB-from-svc1 --address-prefix 10.0.70.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n LB-from-svc2 --address-prefix 10.0.80.0/24 --network-security-group cz-SSLO-nsg
+az network vnet subnet create -g cz-SSLO --vnet-name cz-a1 -n Loop-in --address-prefix 10.0.90.0/24 --network-security-group cz-SSLO-nsg
+
+# Create interfaces in a1
+
+az network public-ip create --resource-group cz-SSLO --name mgmt-pip --allocation-method static
+az network nic create --resource-group cz-SSLO --name Mgmt --vnet-name cz-a1 --subnet Mgmt --network-security-group cz-mgmt-nsg --private-ip-address 10.0.0.4 --public-ip-address Mgmt-pip
+
+az network public-ip create --resource-group cz-SSLO --name Outbound-pip --allocation-method static
+az network nic create --resource-group cz-SSLO --name Outbound --vnet-name cz-a1 --subnet Outbound --network-security-group cz-SSLO-nsg --private-ip-address 10.0.20.4 --public-ip-address Outbound-pip
+
+az network nic create --resource-group cz-SSLO --name Client --vnet-name cz-a1 --subnet Client --network-security-group cz-SSLO-nsg --private-ip-address 10.0.10.4
+
+az network nic create --resource-group cz-SSLO --name interface3 --vnet-name cz-a1 --subnet In --network-security-group cz-SSLO-nsg --private-ip-address 10.0.30.4
+az network nic create --resource-group cz-SSLO --name interface4 --vnet-name cz-a1 --subnet Out --network-security-group cz-SSLO-nsg --private-ip-address 10.0.40.4
+az network nic create --resource-group cz-SSLO --name interface5 --vnet-name cz-a1 --subnet LB-to-svc1 --network-security-group cz-SSLO-nsg --private-ip-address 10.0.50.4
+az network nic create --resource-group cz-SSLO --name interface6 --vnet-name cz-a1 --subnet LB-to-svc2 --network-security-group cz-SSLO-nsg --private-ip-address 10.0.60.4
+az network nic create --resource-group cz-SSLO --name interface7 --vnet-name cz-a1 --subnet Loop-in --network-security-group cz-SSLO-nsg --private-ip-address 10.0.90.4
+
+
+az network public-ip create --resource-group cz-SSLO --name Client-VM-pip --allocation-method static
+az network nic create --resource-group cz-SSLO --name Client-VM --vnet-name cz-a1 --subnet Client --network-security-group cz-SSLO-nsg --private-ip-address 10.0.10.5 --public-ip-address Client-VM-pip
+
+
+
+az network public-ip create --resource-group cz-SSLO --name svc2-pip --sku standard
+az network nic create --resource-group cz-SSLO --name svc2-mgmt --vnet-name cz-a1 --subnet Mgmt --network-security-group cz-SSLO-nsg --private-ip-address 10.0.0.5 --public-ip-address svc2-pip
+az network nic create --resource-group cz-SSLO --name svc2-egress --vnet-name cz-a1 --subnet LB-from-svc2 --network-security-group cz-SSLO-nsg --private-ip-address 10.0.80.5
+az network nic create --resource-group cz-SSLO --name svc2-ingress --vnet-name cz-a1 --subnet LB-to-svc2 --network-security-group cz-SSLO-nsg --private-ip-address 10.0.60.5
+
+
+az network public-ip create --resource-group cz-SSLO --name svc1-pip --sku standard
+az network nic create --resource-group cz-SSLO --name svc1-mgmt --vnet-name cz-a1 --subnet Mgmt --network-security-group cz-SSLO-nsg --private-ip-address 10.0.0.6 --public-ip-address svc1-pip
+az network nic create --resource-group cz-SSLO --name svc1-egress --vnet-name cz-a1 --subnet LB-from-svc1 --network-security-group cz-SSLO-nsg --private-ip-address 10.0.70.5
+az network nic create --resource-group cz-SSLO --name svc1-ingress --vnet-name cz-a1 --subnet LB-to-svc1 --network-security-group cz-SSLO-nsg --private-ip-address 10.0.50.5
+
+
+az network nic update --resource-group cz-SSLO --name Outbound --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name interface3 --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name interface4 --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name interface5 --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name interface6 --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name interface7 --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name svc2-egress --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name svc2-ingress --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name svc1-egress --ip-forwarding true
+az network nic update --resource-group cz-SSLO --name svc1-ingress --ip-forwarding true
+
+
+#Builds
+
+az vm image accept-terms --urn f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest
+
+az vm create --image f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest --resource-group cz-SSLO --name "SSLO" --admin-username azureuser --authentication-type ssh --size Standard_D4_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCooBbRiFm3UDEty/ch1ZZHKwaTBNBwVJZIDwBuvVjPWnS3RkYMFCGFazIkJJ35QznN2o6nJZb0d8KkakkS7owgJl3ghgEmwfROOFo+EEjT5Y5gbetgs9NGHKVFRnESO3S7PF+Uk/tux4/7ReTyVKBUVfCHpr9I/uwuLHWLO87a88JZSm3qbnhHOdwU4Z8+wxNqk+4qHnvRpCq5HIJxwJoC6IbKvrjDN0YXI7yCG3aIbanSFImbDQE5xFFH+FBRBZlp8ovwajiekZ44BAo+/UJ6/dTjaYTd67a+Sq0i/jngqQ+hVqLVB8S2HQzo9l9JX08KWn92euuBDz+StUO7hIHF Chris@MBP.local" --nics Mgmt Outbound Client interface3 interface4 interface5 interface6 interface7
+
+az vm create --image f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest --resource-group cz-SSLO --name "svc2" --admin-username azureuser --authentication-type ssh --size Standard_D4_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCooBbRiFm3UDEty/ch1ZZHKwaTBNBwVJZIDwBuvVjPWnS3RkYMFCGFazIkJJ35QznN2o6nJZb0d8KkakkS7owgJl3ghgEmwfROOFo+EEjT5Y5gbetgs9NGHKVFRnESO3S7PF+Uk/tux4/7ReTyVKBUVfCHpr9I/uwuLHWLO87a88JZSm3qbnhHOdwU4Z8+wxNqk+4qHnvRpCq5HIJxwJoC6IbKvrjDN0YXI7yCG3aIbanSFImbDQE5xFFH+FBRBZlp8ovwajiekZ44BAo+/UJ6/dTjaYTd67a+Sq0i/jngqQ+hVqLVB8S2HQzo9l9JX08KWn92euuBDz+StUO7hIHF Chris@MBP.local" --nics svc2-mgmt svc2-egress svc2-ingress
+
+az vm create --image f5-networks:f5-big-ip-best:f5-bigip-virtual-edition-best-byol:latest --resource-group cz-SSLO --name "svc1" --admin-username azureuser --authentication-type ssh --size Standard_D4_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCooBbRiFm3UDEty/ch1ZZHKwaTBNBwVJZIDwBuvVjPWnS3RkYMFCGFazIkJJ35QznN2o6nJZb0d8KkakkS7owgJl3ghgEmwfROOFo+EEjT5Y5gbetgs9NGHKVFRnESO3S7PF+Uk/tux4/7ReTyVKBUVfCHpr9I/uwuLHWLO87a88JZSm3qbnhHOdwU4Z8+wxNqk+4qHnvRpCq5HIJxwJoC6IbKvrjDN0YXI7yCG3aIbanSFImbDQE5xFFH+FBRBZlp8ovwajiekZ44BAo+/UJ6/dTjaYTd67a+Sq0i/jngqQ+hVqLVB8S2HQzo9l9JX08KWn92euuBDz+StUO7hIHF Chris@MBP.local" --nics svc1-mgmt svc1-egress svc1-ingress
+
+az vm create --image ubuntults --resource-group cz-SSLO --name Client --admin-username azureuser --authentication-type ssh --size Standard_DS1_v2 --ssh-key-value "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCooBbRiFm3UDEty/ch1ZZHKwaTBNBwVJZIDwBuvVjPWnS3RkYMFCGFazIkJJ35QznN2o6nJZb0d8KkakkS7owgJl3ghgEmwfROOFo+EEjT5Y5gbetgs9NGHKVFRnESO3S7PF+Uk/tux4/7ReTyVKBUVfCHpr9I/uwuLHWLO87a88JZSm3qbnhHOdwU4Z8+wxNqk+4qHnvRpCq5HIJxwJoC6IbKvrjDN0YXI7yCG3aIbanSFImbDQE5xFFH+FBRBZlp8ovwajiekZ44BAo+/UJ6/dTjaYTd67a+Sq0i/jngqQ+hVqLVB8S2HQzo9l9JX08KWn92euuBDz+StUO7hIHF Chris@MBP.local" --nics Client-VM
+
+
+#UDR's
+
+az network route-table create --name udr-SSLO-Client --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name Client --route-table udr-SSLO-Client
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-Client --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.0.10.4
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-Client --name 69.251.248.77 --next-hop-type Internet --address-prefix 69.251.248.77/32
+
+az network route-table create --name udr-SSLO-Out --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name Out --route-table udr-SSLO-Out
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-Out --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.0.90.4
+
+
+az network route-table create --name udr-SSLO-Loop-in --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name Loop-in --route-table udr-SSLO-Loop-in
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-Loop-in --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.0.40.4
+
+
+
+
+
+
+az network route-table create --name udr-SSLO-LB-to-svc1 --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name LB-to-svc1 --route-table udr-SSLO-LB-to-svc1
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-LB-to-svc1 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.0.50.5
+
+az network route-table create --name udr-SSLO-LB-to-svc2 --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name LB-to-svc2 --route-table udr-SSLO-LB-to-svc2
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-LB-to-svc2 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.0.60.5
+
+az network route-table create --name udr-SSLO-LB-from-svc1 --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name LB-from-svc1 --route-table udr-SSLO-LB-from-svc1
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-LB-from-svc1 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.0.30.4
+
+az network route-table create --name udr-SSLO-LB-from-svc2 --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name LB-from-svc2 --route-table udr-SSLO-LB-from-svc2
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-LB-from-svc2 --name default --next-hop-type VirtualAppliance --address-prefix 0.0.0.0/0 --next-hop-ip-address 10.0.30.4
+
+az network route-table create --name udr-SSLO-Outbound --resource-group cz-SSLO
+az network vnet subnet update --resource-group cz-SSLO --vnet-name cz-a1 --name Outbound --route-table udr-SSLO-Outbound
+az network route-table route create --resource-group cz-SSLO --route-table-name udr-SSLO-Outbound --name default --next-hop-type Internet --address-prefix 0.0.0.0/0
+
+
+# ALB with HA port
+
+az network lb create -g cz-SSLO -n SSLO-LB --sku Standard --vnet-name cz-a1 --frontend-ip-name SSLO-frontendIP --subnet Out --private-ip-address 10.0.40.5
+az network lb probe create -g cz-SSLO --lb-name SSLO-LB -n SSLO-LB-probe --protocol tcp --port 443
+az network lb rule create -g cz-SSLO --lb-name SSLO-LB -n SSL-LB-rule --protocol All --backend-pool-name SSLO-LBbepool --frontend-port 0 --backend-port 0
+
+
+# BIG-IP SSLO config's
+
+create net vlan Outbound
+modify net vlan Outbound interfaces add { 1.1 }
+
+create net vlan Client
+modify net vlan Client interfaces add { 1.2 }
+
+create net vlan In
+modify net vlan In interfaces add { 1.3 }
+
+create net vlan Out
+modify net vlan Out interfaces add { 1.4 }
+
+create net vlan LB-to-svc1
+modify net vlan LB-to-svc1 interfaces add { 1.5 }
+
+create net vlan LB-to-svc2
+modify net vlan LB-to-svc2 interfaces add { 1.6 }
+
+create net vlan Loop-in
+modify net vlan Loop-in interfaces add { 1.7 }
+
+create net route-domain 2
+
+modify net route-domain 2 vlans add { LB-to-svc1 LB-to-svc2 Loop-in }
+
+create net self 10.0.10.4 { address 10.0.10.4/24 allow-service default vlan Client }
+create net self 10.0.20.4 { address 10.0.20.4/24 allow-service default vlan Outbound }
+
+create net self 10.0.30.4 { address 10.0.30.4/24 allow-service default vlan In }
+create net self 10.0.40.4 { address 10.0.40.4/24 allow-service default vlan Out }
+
+create net self 10.0.50.4%2 { address 10.0.50.4%2/24 allow-service default vlan LB-to-svc1 }
+create net self 10.0.60.4%2 { address 10.0.60.4%2/24 allow-service default vlan LB-to-svc2 }
+create net self 10.0.90.4%2 { address 10.0.90.4%2/24 allow-service default vlan Loop-in }
+
+create net route default network default gw 10.0.20.1
+
+create ltm pool svc_pool { members add { 10.0.50.5%2:any {address 10.0.50.5%2 } 10.0.60.5%2:any { address 10.0.60.5%2 } } monitor gateway_icmp }
+
+create ltm virtual svc_vs { destination 0.0.0.0%2:any ip-protocol tcp mask any pool svc_pool source 0.0.0.0%2/0 translate-address disabled translate-port disabled } 
+
+# BIG-IP svc1 config's
+
+create net vlan Egress
+modify net vlan Egress interfaces add { 1.1 }
+
+create net vlan Ingress
+modify net vlan Ingress interfaces add { 1.2 }
+
+create net self 10.0.70.5 { address 10.0.70.5/24 allow-service default vlan Egress }
+create net self 10.0.50.5 { address 10.0.50.5/24 allow-service default vlan Ingress }
+
+create net route default network default gw 10.0.70.1
+
+create ltm virtual FWD_vs { destination 0.0.0.0:any ip-protocol tcp mask any source 0.0.0.0/0 translate-address disabled translate-port disabled }
+
+# BIG-IP svc2 config's
+
+create net vlan Egress
+modify net vlan Egress interfaces add { 1.1 }
+
+create net vlan Ingress
+modify net vlan Ingress interfaces add { 1.2 }
+
+create net self 10.0.80.5 { address 10.0.80.5/24 allow-service default vlan Egress }
+create net self 10.0.50.6 { address 10.0.50.6/24 allow-service default vlan Ingress }
+
+create net route default network default gw 10.0.80.1
+
+create ltm virtual FWD_vs { destination 0.0.0.0:any ip-protocol tcp mask any source 0.0.0.0/0 translate-address disabled translate-port disabled }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

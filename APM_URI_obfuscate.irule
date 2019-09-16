@@ -1,0 +1,20 @@
+
+when HTTP_RESPONSE {
+    if { [HTTP::status] == 302 }
+        set l [string first "?" [HTTP::header Location]]
+        set first_half = [string range [HTTP::header Location] 0 $l]
+        set second_half = [binary format H* [string range [HTTP::header Location] $l end]]
+        HTTP::header replace Location "$first_half$second_half"
+}
+
+
+when HTTP_RESPONSE {
+    if { [HTTP::status] == 302 }
+    {
+        set l [string first "l" [HTTP::header Location]]
+        set first_half = [string range [HTTP::header Location] 0 $l]
+        set second_half = [binary format H* [string range [HTTP::header Location] $l end]]
+        HTTP::header replace Location "$first_half$second_half"
+    }
+}
+
