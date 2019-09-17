@@ -1,0 +1,30 @@
+when CLIENT_ACCEPTED { ACCESS::restrict_irule_events disable }
+
+when HTTP_REQUEST {
+
+    if { [HTTP::uri] ends_with "-f5-f5" } {
+       
+        set second_part [b64decode [string trim [URI::basename [HTTP::uri]] "-f5-f5"]]
+        set first_part [URI::path [HTTP::uri] 1]
+        log local0. "Restored URI:  $first_part$second_part"
+        HTTP::uri $first_part$second_part
+        }
+}
+
+
+
+when HTTP_RESPONSE {
+    set debug 1
+    if { [HTTP::status] == 302 && $debug}
+    {
+        set l [string first "/fip" [HTTP::header Location]]
+        if { $l >= 0 } { 
+            set first_part [string range [HTTP::header Location] 0 $l]
+            set second_part [b64encode [string range [HTTP::header Location] [expr $l+1] end]]
+        
+            HTTP::header replace Location "$first_part$second_part-f5-f5"
+        } else {
+           # log local0. "Did not find /fip :  $l - [HTTP::header Location]"
+        }
+    }
+}
