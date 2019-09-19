@@ -1,0 +1,12 @@
+when ACCESS_POLICY_AGENT_EVENT {
+    if { [ACCESS::policy agent_id] eq "username" } {
+        set l [string first "\" [ACCESS::session data get session.oauth.scope.last.jwt.username]]
+        if { l > 0 } {
+            set username [string range [ACCESS::session data get session.oauth.scope.last.jwt.username] $l end]
+            ACCESS::session data set session.logon.last.username $username
+        }
+        else {
+            ACCESS::session data set session.logon.last.username [ACCESS::session data get session.oauth.scope.last.jwt.username]
+        }
+    }
+}

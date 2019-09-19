@@ -1,0 +1,18 @@
+when HTTP_REQUEST {
+    #if cookie value is blue, send to blue pool
+    switch -glob [http_cookie pool] {
+        "*blue" {
+            pool blue
+        }
+        "*green" {
+            pool green
+        }
+        default {
+        # start distribution part
+        switch $dist {
+            
+        }
+
+        }
+    }
+}
