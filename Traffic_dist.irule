@@ -37,7 +37,7 @@ when HTTP_REQUEST {
 }
 
 when HTTP_RESPONSE {
-    if { [info pool_selector exists] && $pool_selector ne ""} {
-        HTTP::cookie insert pool $pool_selector
+    if { [info exists pool_selector] && $pool_selector ne ""} {
+        HTTP::cookie insert name pool value $pool_selector
     }
 }
