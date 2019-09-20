@@ -3,10 +3,10 @@ when HTTP_REQUEST {
     # pool=virtual_{blue,green}_pool
     set virtual_prefix [string [virtual name] trim "_vs"]
     switch -glob [http_cookie pool] {
-        "*blue" {
+        "*blue_pool" {
             pool ${virtual_prefix}_blue_pool
         }
-        "*green" {
+        "*green_pool" {
             pool ${virtual_prefix}_green_pool
         }
         default {
