@@ -1,10 +1,12 @@
 when HTTP_REQUEST {
-    #if cookie value is blue, send to blue pool
+    #if cookie value ends with blue_pool, send to blue pool
     # pool=virtual_{blue,green}_pool
-    set virtual_prefix [string [virtual name] trim "_vs"]
+    set virtual_prefix [string trim [string trimleft [string tolower [virtual name]] "/common/"] "_vs"]
+    log local0. $virtual_prefix
     switch -glob [http_cookie pool] {
         "*blue_pool" {
             pool ${virtual_prefix}_blue_pool
+            log local0. ${virtual_prefix}_blue_pool
         }
         "*green_pool" {
             pool ${virtual_prefix}_green_pool
@@ -16,6 +18,7 @@ when HTTP_REQUEST {
             switch $distribution {
                 "0" {
                     pool ${virtual_prefix}_blue_pool
+                    log local0. ${virtual_prefix}_blue_pool
                 }
                 "1" {
                     pool ${virtual_prefix}_green_pool
@@ -38,6 +41,6 @@ when HTTP_REQUEST {
 
 when HTTP_RESPONSE {
     if { [info exists pool_selector] && $pool_selector ne ""} {
-        HTTP::cookie insert name pool value $pool_selecto
+        HTTP::cookie insert name pool value $pool_selector
     }
 }
