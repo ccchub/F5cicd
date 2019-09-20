@@ -1,12 +1,13 @@
 when HTTP_REQUEST {
     #if cookie value is blue, send to blue pool
     # pool=virtual_{blue,green}_pool
+    set virtual_prefix [string [virtual name] trim "_vs"]
     switch -glob [http_cookie pool] {
         "*blue" {
-            pool [virtual name]_blue_pool
+            pool ${virtual_prefix}_blue_pool
         }
         "*green" {
-            pool [virtual name]_green_pool
+            pool ${virtual_prefix}_green_pool
         }
         default {
             # start distribution part
@@ -14,20 +15,20 @@ when HTTP_REQUEST {
             set distribution 0
             switch $distribution {
                 "0" {
-                    pool [virtual name]_blue_pool
+                    pool ${virtual_prefix}_blue_pool
                 }
                 "1" {
-                    pool [virtual name]_green_pool
+                    pool ${virtual_prefix}_green_pool
                 }
                 default {
                     set rand [expr { rand()}]
                     if {$rand < $distribution}{
-                        pool [virtual name]_blue_pool
-                        set pool_selector [virtual name]_blue_pool
+                        pool ${virtual_prefix}_blue_pool
+                        set pool_selector ${virtual_prefix}_blue_pool
                     }
                     else {
-                        pool [virtual name]_green_pool
-                        set pool_selector [virtual name]_green_pool
+                        pool ${virtual_prefix}_green_pool
+                        set pool_selector ${virtual_prefix}_green_pool
                     }
                 }
             }
@@ -37,6 +38,6 @@ when HTTP_REQUEST {
 
 when HTTP_RESPONSE {
     if { [info exists pool_selector] && $pool_selector ne ""} {
-        HTTP::cookie insert name pool value $pool_selector
+        HTTP::cookie insert name pool value $pool_selecto
     }
 }
