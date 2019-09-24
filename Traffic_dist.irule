@@ -1,3 +1,8 @@
+## This irule is an enabler for A/B Testing. See below regarding A/B Testing
+## https://www.f5.com/company/blog/open-source-spotlight-f5-enables-a-b-testing-and-blue-green-deployments-with-red-hat-openshift
+## This irule pays special attention to minimising the number of cookie encryption/decryption operations, as an attempt to reduce CPU load.
+## This irule is not compatible with OneConnect
+
 proc value_encrypt { key iv value }{
     set enc_pool_selector [CRYPTO::encrypt -alg aes-128-cbc -keyhex $key -ivhex $iv $value]
     return [b64encode $enc_pool_selector]
