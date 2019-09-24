@@ -1,46 +1,71 @@
+proc value_encrypt { key iv value }{
+    set enc_pool_selector [CRYPTO::encrypt -alg aes-128-cbc -keyhex $key -ivhex $iv $value]
+    return {[b64encode $enc_pool_selector]}
+}
+
+proc value_decrpt { key iv b64encoded_value }{
+    set dec_pool_selector [CRYPTO::decrypt -alg aes-128-cbc -keyhex $key -ivhex $iv [b64decode $b64encoded_value]]
+    return {$dec_pool_selector}
+}
+
+when RULE_INIT {
+    set key "abed1ddc04fbb05856bca4a0ca60f21e"
+    set iv "d78d86d9084eb9239694c9a733904037"
+    set distribution 0
+}
+
 when HTTP_REQUEST {
-    #if cookie value ends with blue_pool, send to blue pool
     # pool=virtual_{blue,green}_pool
     set virtual_prefix [string trim [string trimleft [string tolower [virtual name]] "/common/"] "_vs"]
-    log local0. $virtual_prefix
-    switch -glob [http_cookie pool] {
-        "*blue_pool" {
+
+    switch $distribution {
+        "0" {
             pool ${virtual_prefix}_blue_pool
-            log local0. ${virtual_prefix}_blue_pool
         }
-        "*green_pool" {
+        "1" {
             pool ${virtual_prefix}_green_pool
         }
         default {
-            # start distribution part
-            # distribution is between 0 and 1
-            set distribution 0
-            switch $distribution {
-                "0" {
+            # New TCP session
+            if{ HTTP::request_num == 1 && ![HTTP::cookie exists pool]} {
+                set rand [expr { rand()}]
+                if {$rand < $distribution}{
                     pool ${virtual_prefix}_blue_pool
-                    log local0. ${virtual_prefix}_blue_pool
+                    set pool_selector ${virtual_prefix}_blue_pool
+                    set enc_pool_selector [call proc_rule::value_encrypt { $key $iv $pool_selector }]
+                    set new 1
                 }
-                "1" {
+                else {
                     pool ${virtual_prefix}_green_pool
+                    set pool_selector ${virtual_prefix}_green_pool
+                    set enc_pool_selector [call proc_rule::value_encrypt { $key $iv $pool_selector }]
+                    set new 1
                 }
-                default {
-                    set rand [expr { rand()}]
-                    if {$rand < $distribution}{
-                        pool ${virtual_prefix}_blue_pool
+            }
+            # New TCP session, existing HTTP session
+            elseif { HTTP::request_num == 1 && [HTTP::cookie exists pool] } {
+                set pool_selector [call proc_rule::value_decrpt { $key $iv [HTTP::cookie pool] }]
+                switch -glob [$pool_selector] {
+                    "*blue" {
+                        pool [virtual name]_blue_pool
                         set pool_selector ${virtual_prefix}_blue_pool
                     }
-                    else {
-                        pool ${virtual_prefix}_green_pool
+                    "*green" {
+                        pool [virtual name]_green_pool
                         set pool_selector ${virtual_prefix}_green_pool
                     }
                 }
             }
+            else {}
         }
     }
 }
 
+#NOT COMPITABLE WITH ONECONNECT
 when HTTP_RESPONSE {
-    if { [info exists pool_selector] && $pool_selector ne ""} {
-        HTTP::cookie insert name pool value $pool_selector
+    if { $new } {
+            set enc_pool_selector [call proc_rule::value_encrypt { $key $iv $pool_selector }]
+            HTTP::cookie insert name pool value $enc_pool_selector
+        }
     }
 }
