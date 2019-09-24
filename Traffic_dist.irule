@@ -3,7 +3,7 @@ proc value_encrypt { key iv value }{
     return {[b64encode $enc_pool_selector]}
 }
 
-proc value_decrpt { key iv b64encoded_value }{
+proc value_decrypt { key iv b64encoded_value }{
     set dec_pool_selector [CRYPTO::decrypt -alg aes-128-cbc -keyhex $key -ivhex $iv [b64decode $b64encoded_value]]
     return {$dec_pool_selector}
 }
@@ -27,24 +27,22 @@ when HTTP_REQUEST {
         }
         default {
             # New TCP session
-            if{ HTTP::request_num == 1 && ![HTTP::cookie exists pool]} {
+            if { [HTTP::request_num] == 1 && !{[HTTP::cookie exists pool]}} {
                 set rand [expr { rand()}]
                 if {$rand < $distribution}{
                     pool ${virtual_prefix}_blue_pool
                     set pool_selector ${virtual_prefix}_blue_pool
-                    set enc_pool_selector [call proc_rule::value_encrypt { $key $iv $pool_selector }]
+                    set enc_pool_selector [call value_encrypt { $key $iv $pool_selector }]
                     set new 1
                 }
                 else {
                     pool ${virtual_prefix}_green_pool
                     set pool_selector ${virtual_prefix}_green_pool
-                    set enc_pool_selector [call proc_rule::value_encrypt { $key $iv $pool_selector }]
+                    set enc_pool_selector [call value_encrypt { $key $iv $pool_selector }]
                     set new 1
-                }
-            }
-            # New TCP session, existing HTTP session
-            elseif { HTTP::request_num == 1 && [HTTP::cookie exists pool] } {
-                set pool_selector [call proc_rule::value_decrpt { $key $iv [HTTP::cookie pool] }]
+                } 
+            } elseif { [HTTP::request_num] == 1 && [HTTP::cookie exists pool] } {
+                set pool_selector [call value_decrypt { $key $iv [HTTP::cookie pool] }]
                 switch -glob [$pool_selector] {
                     "*blue" {
                         pool [virtual name]_blue_pool
@@ -56,7 +54,6 @@ when HTTP_REQUEST {
                     }
                 }
             }
-            else {}
         }
     }
 }
@@ -64,8 +61,7 @@ when HTTP_REQUEST {
 #NOT COMPITABLE WITH ONECONNECT
 when HTTP_RESPONSE {
     if { $new } {
-            set enc_pool_selector [call proc_rule::value_encrypt { $key $iv $pool_selector }]
-            HTTP::cookie insert name pool value $enc_pool_selector
-        }
+        set enc_pool_selector [call value_encrypt { $key $iv $pool_selector }]
+        HTTP::cookie insert name pool value $enc_pool_selector
     }
 }
