@@ -3,24 +3,13 @@
 ## This irule pays special attention to minimising the number of cookie encryption/decryption operations, as an attempt to reduce CPU load.
 ## This irule is not compatible with OneConnect
 
-proc value_encrypt { key iv value }{
-    set enc_pool_selector [CRYPTO::encrypt -alg aes-128-cbc -keyhex $key -ivhex $iv $value]
-    return [b64encode $enc_pool_selector]
-}
-
-proc value_decrypt { key iv b64encoded_value }{
-    set dec_pool_selector [CRYPTO::decrypt -alg aes-128-cbc -keyhex $key -ivhex $iv [b64decode $b64encoded_value]]
-    return $dec_pool_selector
-}
-
 when RULE_INIT {
-    set static::key "abed1ddc04fbb05856bca4a0ca60f21e"
-    set static::iv "d78d86d9084eb9239694c9a733904037"
+    set static::encryption_passphrase "abcd1234"
+    set static::cookiename "pool"
     set static::distribution 0.50
 }
 
 when HTTP_REQUEST {
-    # pool=virtual_{blue,green}_pool
     set virtual_prefix [string trim [string trimleft [string tolower [virtual name]] "/common/"] "_vs"]
     set new 0
     switch $static::distribution {
@@ -37,29 +26,23 @@ when HTTP_REQUEST {
                 if {$rand < $static::distribution}{
                     pool ${virtual_prefix}_blue_pool
                     set pool_selector ${virtual_prefix}_blue_pool
-                    log local0. $pool_selector
-                    set enc_pool_selector [call value_encrypt $static::key $static::iv $pool_selector]
                     set new 1
                 }
                 else {
                     pool ${virtual_prefix}_green_pool
                     set pool_selector ${virtual_prefix}_green_pool
-                    log local0. $pool_selector
-                    set enc_pool_selector [call value_encrypt $static::key $static::iv $pool_selector]
                     set new 1
                 } 
             } elseif { [HTTP::request_num] == 1 && [HTTP::cookie exists pool] } {
-                set pool_selector [call value_decrypt $static::key $static::iv [HTTP::cookie pool]]
+                set pool_selector [HTTP::cookie decrypt $static::cookiename $static::encryption_passphrase]
                 switch -glob $pool_selector {
                     "*blue_pool" {
                         pool ${virtual_prefix}_blue_pool
                         set pool_selector ${virtual_prefix}_blue_pool
-                        log local0. "After decryption: $pool_selector"
                     }
                     "*green_pool" {
                         pool ${virtual_prefix}_green_pool
                         set pool_selector ${virtual_prefix}_green_pool
-                        log local0. "After decryption: $pool_selector"
                     }
                 }
             }
@@ -70,7 +53,7 @@ when HTTP_REQUEST {
 #NOT COMPITABLE WITH ONECONNECT
 when HTTP_RESPONSE {
     if { $new } {
-        set enc_pool_selector [call value_encrypt $static::key $static::iv $pool_selector]
-        HTTP::cookie insert name pool value $enc_pool_selector
+        HTTP::cookie insert name $static::cookiename value $pool_selector
+        HTTP::cookie encrypt $static::cookiename $static::encryption_passphrase
     }
 }
