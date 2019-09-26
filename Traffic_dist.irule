@@ -1,6 +1,6 @@
 ## This irule is an enabler for A/B Testing. See below regarding A/B Testing
 ## https://www.f5.com/company/blog/open-source-spotlight-f5-enables-a-b-testing-and-blue-green-deployments-with-red-hat-openshift
-## This irule pays special attention to minimising the number of cookie encryption/decryption operations. 
+## This irule pays special attention to minimising the number of cookie encryption/decryption operations.
 ## An encryption operation only happens at the first HTTP response, on the first TCP connection.
 ## A decryption operation only happens at the first HTTP request, on subsequent new TCP connections.
 ## e.g. A browser makes multiple TCP connections to a site, all of which share the same cookie
