@@ -4,6 +4,11 @@
 ## A decryption operation only happens at the first HTTP request, on subsequent new TCP connections.
 ## e.g. A browser makes multiple TCP connections to a site, all of which share the same cookie
 ## This irule is not compatible with OneConnect
+## Naming Convention:
+## Virtual Server Name: {virtual}_vs  
+## Pool name: {virtual}_blue_pool, {virtual}_green_pool
+## where {virtual} is the name of the virtual server
+## e.g. app1_vs, app1_green_pool, app1_blue_pool
 
 when RULE_INIT {
     set static::encryption_passphrase "abcd1234"
