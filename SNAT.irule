@@ -1,0 +1,10 @@
+when CLIENT_ACCEPTED {
+    #log local0. "New connection from:  [IP::remote_addr] "
+    if { [class match [IP::local_addr] equals VPN_snat] } {
+        snat 192.168.1.18
+    }
+    
+    else { ![class match [IP::local_addr] equals private_net] } {
+        log local0. "Non-private destination address: [IP::local_addr]"
+        snat 192.168.1.18 }
+}
