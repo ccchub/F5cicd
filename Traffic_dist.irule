@@ -60,7 +60,7 @@ when HTTP_REQUEST {
     }
 }
 
-#NOT COMPITABLE WITH ONECONNECT
+# NOT COMPITABLE WITH ONECONNECT
 when HTTP_RESPONSE {
     if { $new } {
         HTTP::cookie insert name $static::cookiename value $pool_selector
