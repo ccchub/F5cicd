@@ -1,9 +1,10 @@
 ## This irule is an enabler for A/B Testing. See below regarding A/B Testing
 ## https://www.f5.com/company/blog/open-source-spotlight-f5-enables-a-b-testing-and-blue-green-deployments-with-red-hat-openshift
 ## This irule pays special attention to minimising the number of cookie encryption/decryption operations.
-## An encryption operation only happens at the first HTTP response, on the first TCP connection.
-## A decryption operation only happens at the first HTTP request, on subsequent new TCP connections.
-## e.g. A browser makes multiple TCP connections to a site, all of which share the same cookie
+## For a single HTTP session, only one encryption opertaiton happens, following by one decryption per TCP session.
+## The encryption happens at the first HTTP response, on the first TCP connection.
+## The decryption happens at the first HTTP request, on each of the subsequent new TCP connections, if they exist.
+## e.g. A browser makes multiple TCP connections to a site, all of which share the same HTTP session, identifiable by the cookie value.
 ## This irule is not compatible with OneConnect
 ## Naming Convention:
 ## Virtual Server Name: {virtual}_vs  
@@ -28,7 +29,7 @@ when HTTP_REQUEST {
             pool ${virtual_prefix}_green_pool
         }
         default {
-            # New TCP session
+            # First TCP session
             if { [HTTP::request_num] == 1 and !([HTTP::cookie exists pool])} {
                 set rand [expr { rand()}]
                 if {$rand < $static::distribution}{
@@ -41,6 +42,7 @@ when HTTP_REQUEST {
                     set pool_selector ${virtual_prefix}_green_pool
                     set new 1
                 } 
+            # Subsequent TCP sessions
             } elseif { [HTTP::request_num] == 1 && [HTTP::cookie exists pool] } {
                 set pool_selector [HTTP::cookie decrypt $static::cookiename $static::encryption_passphrase]
                 switch -glob $pool_selector {
