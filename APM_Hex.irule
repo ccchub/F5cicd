@@ -13,7 +13,7 @@ when HTTP_REQUEST {
 
 
 
-when HTTP_RESPONSE {
+when HTTP_RESPONSE_RELEASE {
     set debug 1
     if { [HTTP::status] == 302 && $debug}
     {
