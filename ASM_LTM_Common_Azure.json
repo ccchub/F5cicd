@@ -7,64 +7,12 @@
         "class": "ADC",
         "schemaVersion": "3.12.0",
         "id": "5489432",
-        "Apps": {
-            "class": "Tenant",
-            "dvwa_vs": {
-                "class": "Application",
-                "template": "https",
-                "serviceMain": {
-                    "class": "Service_HTTPS",
-                    "redirect80": true,
-                    "virtualAddresses": [
-                        "10.0.2.10"
-                    ],
-                    "securityLogProfiles": [
-                        {
-                            "bigip": "/Common/Log all requests"
-                        },
-                        {
-                            "use": "/Common/Stuff/telemetry_security_log_profile"
-                        }
-                    ],
-                    "snat": "auto",
-                    "pool": "webPool",
-                    "serverTLS": "/Common/Stuff/wildcard_home_lab_SSL_pro",
-                    "policyWAF": {
-                        "use": "dvwa_waf_pol"
-                    },
-                    "profileTrafficLog": {
-                        "use": "/Common/Stuff/telemetry_traffic_log_profile"
-                    }
-                },
-                "dvwa_waf_pol": {
-                    "class": "WAF_Policy",
-                    "url": "https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/owasp_ready_template/owasp-no-auto-tune-v1.1.xml",
-                    "ignoreChanges": true
-                },
-                "webPool": {
-                    "class": "Pool",
-                    "monitors": [
-                        {
-                            "use": "/Common/Stuff/http_302"
-                        }
-                    ],
-                    "members": [
-                        {
-                            "servicePort": 80,
-                            "serverAddresses": [
-                                "{{backend_ip}}"
-                            ]
-                        }
-                    ]
-                }
-            }
-        },
-        "ADC_Common": {
+        "Common": {
             "class": "Tenant",
             "enable": true,
             "Shared": {
                 "class": "Application",
-                "template":"shared",
+                "template": "shared",
                 "http_302": {
                     "class": "Monitor",
                     "monitorType": "http"
@@ -187,6 +135,60 @@
                             "requestType": "all"
                         }
                     }
+                }
+            }
+        },
+        "Apps": {
+            "class": "Tenant",
+            "dvwa_vs": {
+                "class": "Application",
+                "template": "https",
+                "serviceMain": {
+                    "class": "Service_HTTPS",
+                    "redirect80": true,
+                    "virtualAddresses": [
+                        "10.0.2.10"
+                    ],
+                    "securityLogProfiles": [
+                        {
+                            "bigip": "/Common/Log all requests"
+                        },
+                        {
+                            "bigip": "/Common/Shared/telemetry_security_log_profile"
+                        }
+                    ],
+                    "snat": "auto",
+                    "pool": "webPool",
+                    "serverTLS": {
+                        "bigip": "/Common/Shared/wildcard_home_lab_SSL_pro"
+                    },
+                    "policyWAF": {
+                        "use": "dvwa_waf_pol"
+                    },
+                    "profileTrafficLog": {
+                        "bigip": "/Common/Shared/telemetry_traffic_log_profile"
+                    }
+                },
+                "dvwa_waf_pol": {
+                    "class": "WAF_Policy",
+                    "url": "https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/owasp_ready_template/owasp-no-auto-tune-v1.1.xml",
+                    "ignoreChanges": true
+                },
+                "webPool": {
+                    "class": "Pool",
+                    "monitors": [
+                        {
+                            "bigip": "/Common/Shared/http_302"
+                        }
+                    ],
+                    "members": [
+                        {
+                            "servicePort": 80,
+                            "serverAddresses": [
+                                "{{backend_ip}}"
+                            ]
+                        }
+                    ]
                 }
             }
         }
