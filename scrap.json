@@ -1,0 +1,157 @@
+{
+    "class": "ADC",
+    "schemaVersion": "3.12.0",
+    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/3.14.0/as3-schema-3.14.0-4.json",
+    "id": "5489432",
+    "label": "ASM_policy_external_URL",
+    "remark": "ASM_policy_external_URL",
+    "AS3": {
+      "class": "Tenant",
+      "dvwa_http_vs": {
+        "class": "Application",
+        "template": "http",
+        "serviceMain": {
+          "class": "Service_HTTP",
+          "virtualAddresses": [
+            "0.0.0.0"
+          ],
+          "securityLogProfiles": [
+            {
+              "bigip": "/Common/Log all requests"
+            },
+            {
+              "use": "/AS3/Shared/telemetry_security_log_profile"
+            }
+          ],
+          "snat": "auto",
+          "pool": "webPool",
+          "policyWAF": {
+            "use": "My_ASM_Policy"
+          },
+          "profileTrafficLog": {
+            "use": "telemetry_traffic_log_profile"
+          }
+        },
+        "webPool": {
+          "class": "Pool",
+          "monitors": [
+            "icmp"
+          ],
+          "members": [
+            {
+              "servicePort": 80,
+              "serverAddresses": [
+                "{{backend_ip}}"
+              ]
+            }
+          ]
+        },
+        "My_ASM_Policy": {
+            "class": "WAF_Policy",
+            "url": "https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/owasp_ready_template/owasp-no-auto-tune-v1.1.xml",
+            "ignoreChanges": true
+          }
+      },
+      "Shared": {
+        "class": "Application",
+        "telemetry": {
+            "class": "Pool",
+            "members": [
+              {
+                "enable": true,
+                "serverAddresses": [
+                  "255.255.255.254"
+                ],
+                "servicePort": 6514
+              }
+            ],
+            "monitors": [
+              {
+                "bigip": "/Common/tcp"
+              }
+            ]
+          },
+          "telemetry_local_pool": {
+            "class": "Pool",
+            "monitors": [{
+              "bigip": "/Common/tcp"
+            }],
+            "members": [
+              {
+                "servicePort": 6514,
+                "serverAddresses": [
+                  "255.255.255.254"
+                ]
+              }
+            ]
+          },
+          "telemetry_local_rule": {
+              "remark": "Only required when TS is a local listener",
+              "class": "iRule",
+              "iRule": "when CLIENT_ACCEPTED {\n  node 127.0.0.1 6514\n}"
+          },
+          "telemetry_local": {
+              "remark": "Only required when TS is a local listener",
+            "class": "Service_TCP",
+            "virtualAddresses": [
+              "255.255.255.254"
+            ],
+            "virtualPort": 6514,
+            "iRules": [
+            "telemetry_local_rule"
+            ]
+          },
+          "telemetry_hsl": {
+            "class": "Log_Destination",
+            "type": "remote-high-speed-log",
+            "protocol": "tcp",
+            "pool": {
+              "use": "telemetry"
+            }
+          },
+          "telemetry_formatted": {
+            "class": "Log_Destination",
+            "type": "splunk",
+            "forwardTo": {
+              "use": "telemetry_hsl"
+            }
+          },
+          "telemetry_publisher": {
+            "class": "Log_Publisher",
+            "destinations": [
+              {
+                "use": "telemetry_formatted"
+              }
+            ]
+          },
+          "telemetry_traffic_log_profile": {
+            "class": "Traffic_Log_Profile",
+            "requestSettings": {
+              "requestEnabled": true,
+              "requestProtocol": "mds-tcp",   
+              "requestPool": {
+                  "use": "telemetry_local_pool"
+              },
+              "requestTemplate": "event_source=\"request_logging\",hostname=\"$BIGIP_HOSTNAME\",client_ip=\"$CLIENT_IP\",server_ip=\"$SERVER_IP\",http_method=\"$HTTP_METHOD\",http_uri=\"$HTTP_URI\",virtual_name=\"$VIRTUAL_NAME\",event_timestamp=\"$DATE_HTTP\""
+            }
+          },
+          "telemetry_security_log_profile": {
+            "class": "Security_Log_Profile",
+            "application": {
+              "localStorage": false,
+              "remoteStorage": "splunk",
+              "protocol": "tcp",
+              "servers": [
+                {
+                  "address": "255.255.255.254",
+                  "port": "6514"
+                }
+              ],
+              "storageFilter": {
+              "requestType": "all"
+              }
+            }
+          }
+      }
+    }
+  }

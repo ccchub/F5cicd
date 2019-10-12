@@ -13,8 +13,8 @@
     "ADC_Common": {
       "class": "Tenant",
       "my_data_group_1": {
-        "template": "generic",
         "class": "Application",
+        "template": "generic",
         "mydatagroup1": {
           "class": "Data_Group",
           "keyDataType": "integer",
