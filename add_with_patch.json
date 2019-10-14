@@ -1,13 +1,13 @@
 [
     {
-        "path": "/Apps/app2_vs",
+        "path": "/Apps/AWS_APIGW_vs",
         "op": "add",
         "value": {
             "class": "Application",
             "template": "https",
             "serviceMain": {
                 "class": "Service_HTTPS",
-                "redirect80": true,
+                "redirect80": false,
                 "virtualAddresses": [
                     "10.0.2.11"
                 ],
@@ -24,14 +24,17 @@
                 "serverTLS": {
                     "bigip": "/Common/Shared/wildcard_home_lab_SSL_pro"
                 },
+                "clientTLS": {
+                    "bigip": "/Common/serverssl"
+                },
                 "policyWAF": {
-                    "use": "app2_waf_pol"
+                    "use": "AWS_APIGW_waf_pol"
                 },
                 "profileTrafficLog": {
                     "bigip": "/Common/Shared/telemetry_traffic_log_profile"
                 }
             },
-            "app2_waf_pol": {
+            "AWS_APIGW_waf_pol": {
                 "class": "WAF_Policy",
                 "url": "https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/owasp_ready_template/owasp-no-auto-tune-v1.1.xml",
                 "ignoreChanges": true
@@ -40,15 +43,16 @@
                 "class": "Pool",
                 "monitors": [
                     {
-                        "bigip": "/Common/Shared/http_302"
+                        "bigip": "/Common/https"
                     }
                 ],
                 "members": [
                     {
-                        "servicePort": 80,
-                        "serverAddresses": [
-                            "10.5.1.4"
-                        ]
+                        "addressDiscovery": "fqdn",
+                        "servicePort": 443,
+                        "autoPopulate": true,
+                        "hostname": "xpm9db9xf0.execute-api.us-east-1.amazonaws.com",
+                        "shareNodes": true
                     }
                 ]
             }
