@@ -199,7 +199,10 @@
                     "class": "Service_HTTPS",
                     "redirect80": false,
                     "virtualAddresses": [
-                        "10.0.2.11"
+                        "10.0.4.4"
+                    ],
+                    "iRules": [
+                        "AWS_APIGW_local_rule"
                     ],
                     "securityLogProfiles": [
                         {
@@ -223,6 +226,11 @@
                     "profileTrafficLog": {
                         "bigip": "/Common/Shared/telemetry_traffic_log_profile"
                     }
+                },
+                "AWS_APIGW_local_rule": {
+                    "remark": "Only required when TS is a local listener",
+                    "class": "iRule",
+                    "iRule": "when HTTP_REQUEST {\n    HTTP::header host xpm9db9xf0.execute-api.us-east-1.amazonaws.com\n}"
                 },
                 "AWS_APIGW_waf_pol": {
                     "class": "WAF_Policy",
