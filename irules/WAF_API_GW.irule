@@ -1,0 +1,24 @@
+when HTTP_REQUEST {
+    #log local0. "[HTTP::uri]"
+    #log local0. "[HTTP::header Host]"
+
+    HTTP::header replace Host "xpm9db9xf0.execute-api.us-east-1.amazonaws.com"
+    if { [HTTP::uri] starts_with "/test/header" } {
+        HTTP::respond 200 content "<html><head><title>Request Rejected</title></head><body>[HTTP::request]<br><br>--**--<br><br><a href=\"javascript:history.back();\">Go Back</a></body></html>" Cache-Control "private, no-store, no-cache"
+    }
+}
+
+when ASM_REQUEST_BLOCKING {
+    #log local0.debug "ASM::status = [ASM::status] **"
+    if { [ASM::status] equals "blocked" } {
+        set x [ASM::violation_data]
+        set response "<html><title>Blocked</title><head>Blocking Page</head><body><br><br>Violation  = [lindex $x 0]<br>Support id = [lindex $x 1]<br>Client Source_ip  = [lindex $x 4]<br>Attack_type= [lindex $x 5]</body></html>"
+
+        #log local0.debug "Replacing response page with $response"
+        ASM::payload replace 0 [ASM::payload length] ""
+        ASM::payload replace 0 0 $response
+        HTTP::header replace Content-Length [ASM::payload length]
+
+    }
+
+}
