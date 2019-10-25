@@ -1,0 +1,55 @@
+az login
+
+az group create --name chzhang-aks --location eastus
+
+az aks create --name aks-cluster --resource-group chzhang-aks --node-count 1 --generate-ssh-keys
+
+##Adding current user to docker group, otherwise az acr login has permission issues
+sudo gpasswd -a $USER docker
+
+az acr login --name abgmbh
+
+az acr create --resource-group chzhang-aks --name abgmbh --sku Basic
+
+sudo apt install docker.io
+
+sudo usermod -aG docker $USER
+
+ACR_LOGIN_SERVER=$(az acr show --name abgmbh --query loginServer --output tsv)
+ACR_REGISTRY_ID=$(az acr show --name abgmbh --query id --output tsv)
+SP_PASSWD=$(az ad sp create-for-rbac --name cz_k8s --role Reader --scopes $ACR_REGISTRY_ID --query password --output tsv)
+CLIENT_ID=$(az ad sp show --id http://cz_k8s --query appId --output tsv)
+
+kubectl create secret docker-registry abgmbh.azurecr.io \
+--docker-server $ACR_LOGIN_SERVER \
+--docker-username $CLIENT_ID \
+--docker-password $SP_PASSWD \
+--docker-email christopher.zhang@f5.com \
+--namespace nginx-ingress
+
+kubectl delete secret abgmbh.azurecr.io --namespace nginx-ingress
+
+
+kubectl apply -f deployment/nginx-plus-ingress.yaml
+
+kubectl get pods --namespace nginx-ingress
+kubectl --namespace nginx-ingress describe pod nginx-ingress-597465fb5d-g4gqr
+kubectl --namespace nginx-ingress get secret --output=yaml
+kubectl --namespace nginx-ingress get secret abgmbh.azurecr.io --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
+
+kubectl logs nginx-ingress-597465fb5d-g4gqr --namespace nginx-ingress
+
+abgmbh.azurecr.io/nginx-plus-ingress:edge
+
+
+Install The Azure Command Line Interface (CLI)
+
+https://f5.nginx.com/licenses/ for F5 
+
+NGINX+ 30 day trial request https://www.nginx.com/free-trial-request/
+NGINX Controller 30 day trial request https://www.nginx.com/free-trial-request-nginx-controller/
+
+
+
+
+

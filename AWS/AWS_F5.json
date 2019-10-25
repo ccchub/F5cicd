@@ -1,12 +1,12 @@
 {
-    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/3.12.0/as3-schema-3.12.0-5.json",
+    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/3.14.0/as3-schema-3.14.0-4.json",
     "class": "AS3",
     "action": "deploy",
     "persist": true,
     "declaration": {
         "class": "ADC",
         "schemaVersion": "3.12.0",
-        "id": "Add-Common-configs",
+        "id": "5489432",
         "Common": {
             "class": "Tenant",
             "enable": true,
@@ -20,19 +20,39 @@
                 "wildcard_home_lab_cer_key": {
                     "class": "Certificate",
                     "remark": "wildcard.home.lab",
-                    "certificate": "-----BEGIN CERTIFICATE-----\nMIIDeTCCAmGgAwIBAgICAIYwDQYJKoZIhvcNAQELBQAwOTERMA8GCgmSJomT8ixk\nARkWAWwxETAPBgoJkiaJk/IsZAEZFgFoMREwDwYDVQQDEwhoLURDNy1DQTAeFw0x\nOTAxMDcyMTUwMDBaFw0yOTAxMDQyMTUwMDBaMEgxCzAJBgNVBAYTAlVTMQswCQYD\nVQQIDAJDQTETMBEGA1UECgwKQWNtZSwgSW5jLjEXMBUGA1UEAwwOYmlnaXAuaG9t\nZS5sYWIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDj98gRYt9O/PFd\nte/OKb5WQnZ5XbS1v6SnVL4/ar8rJOD+Wipe2S7ujzdRpjJt53xZUdMNApmWiUlU\n7y9XT5bIt0QkP5ll8xX8RMQtoSRXLDDoKspUf5vMcK88GzhLX+FwCtexh2nAu/4K\nuiFlaacILSrsJPe4NoEsfRNygaQRyH19cgWr6G0itgsnDVs0JQD3o9xyA3grwgtP\nXvKM8zt8Keil5sZBIgdBElqHxoduk2uJJTqE8vxKbgN5vyRgYljbI5SboI5iji8M\nfyTqmYMYb4CKNYRURUvuLXClNO2uPw2TSINHuZaWWJOaOTLmk3kjAGoZULW5uUW/\no7V8BmOfAgMBAAGjfDB6MC0GA1UdEQQmMCSCCiouZGRucy5uZXSCCiouaG9tZS5s\nYWKCCiouaGFoYWguZXUwMQYDVR0lBCowKAYIKwYBBQUHAwEGCCsGAQUFBwMCBggr\nBgEFBQcDAwYIKwYBBQUHAwQwCQYDVR0TBAIwADALBgNVHQ8EBAMCBeAwDQYJKoZI\nhvcNAQELBQADggEBACLUfYTjM3pupoPM68lMHYe3RYLhj0GZFR6cvaYTtuQt5zeU\nprfxb5L0yKX9Azmuil2Iulso9CN6YmrNAYKHgqtEQb0yu0H1RqcF1PAdpFPlodmk\njRuo5FGwfcD1y7zzylN+jiO3yN8sLa2nPYMy0xn0CyOiWGSZTQw+Bcjn/bp+WtmU\nnGbV9vNsIWJbX1jOUe/Tyd8Jh4bXpqVzcIBMlvEey806KsJQ+te0eDmGuCyFbxyZ\n8Q37rF8pQ9Frgu6QR+LnohQXGr9BO4l2KGLXdicHCn3khCIJbsTRZq5sDn7wv0+l\n17ph9VqOqWk8oycpyk+KlnHncr38GT7WUcCGHy8=\n-----END CERTIFICATE-----",
-                    "privateKey": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA4/fIEWLfTvzxXbXvzim+VkJ2eV20tb+kp1S+P2q/KyTg/loq\nXtku7o83UaYybed8WVHTDQKZlolJVO8vV0+WyLdEJD+ZZfMV/ETELaEkVyww6CrK\nVH+bzHCvPBs4S1/hcArXsYdpwLv+CrohZWmnCC0q7CT3uDaBLH0TcoGkEch9fXIF\nq+htIrYLJw1bNCUA96PccgN4K8ILT17yjPM7fCnopebGQSIHQRJah8aHbpNriSU6\nhPL8Sm4Deb8kYGJY2yOUm6COYo4vDH8k6pmDGG+AijWEVEVL7i1wpTTtrj8Nk0iD\nR7mWlliTmjky5pN5IwBqGVC1ublFv6O1fAZjnwIDAQABAoIBAESj9dyuTZjF9pMF\n1gfYb9QfPPb8LQ5Qfu5XSNVledwuxYQwd/OJJ2VzP+/Yv/Rxr/Jg/dA8CSzXd3oY\nbsO2VitnayAS+khFMkh8GCm5DG0nBC7Tu4pHxgx/nXPWqlOfsgx/Z0SwBjqfIDXw\np1+WuVFv8C2cT+5qkuhnXLSsrk8f4pMMjOH6qNQy7LdVlmuRwI6BLRUa7P6FEq+L\nHgxpUlS7D74WSKeht4detSctEcEGHycsGgFl6b6XNTu5P2inV6HDObp830WXvhO9\nExM9YIIrVpsWJ6diMAZcNij8yGARMoVTZU/EPL2ouqQahZa+2nzznuBpf7EyIrUq\n/rfCYWECgYEA9Oi+hdFIYNQCTSACn7zNmJeZf6oKazZpQSNzBt+PlguY7fFHZsRB\nFkIoeNC7SLKAQMrGljWdU7tFAWLwKsAGrNlSGPWX6AgQLGLBmHWUYIk+JMpqJ0tu\nB3wdv8KDaOg1TlvHzEsfhVjWp+4GDYuntsP300qO9rjr5ireRcNxO5ECgYEA7kqi\ntod1wgmpd/gKfS4KaQHsZlNlSOAzHOgWWSa1sSqzWiW8R9a55yk0APS6g4fBbv3l\nZ7FSemgzyontJibUFdqgzRxoCCcAXovB5agdl7018NuIv9t5xvmGOGNPdmoJqVZU\nA41qGU+ZWKZOzwqB4ct5nSAKvrIb7WMdHFhzNC8CgYEAqjE/jTDlslxCiSQwjp8e\n5OadBim9ecnjFSA0ZFdhqey/RsNAUjsZ3AT3qRWswJVDKUOBA4uYnEJsbs05hwvQ\n17diJPQur1FDJAUw8ejrxrY5GEoNwObbPJpU9hiPR4zu1lhTnTWrXvhgm2x+ilU9\npHXEt/F9LhlN3bJ2qlZqTvECgYEAnbFSoIxgR3pxZe0Fs/WF+hvFv6msu19zM8v7\nDiBp2MazThLu2HOnLuy7d259B5INVlA7QjW8qTjQHVbNU5QagiPeih4kUlDNE8RV\nGo/4lXQngC8n/h9WJXD3e9VsvqZJooB4tKke74UXq+zS9nyzmyM2Zd7QfYYMqToQ\nB7QY+Q0CgYBXdrdN9EYgDTtdROO8aJClbbA5idX/IfhhdmP3MVjrVXqiLujupEwv\nbmTyKxpV/HlqiR4vnHA4psyvjjMD4t2l7BoEADj7xIv/8UyBzTLGJ17cE7+xgOkJ\nv3nR/YxoaLIAK/ZVsuOsvoz6ASTdqghNaBev54EeTenE5rDL0Olg3g==\n-----END RSA PRIVATE KEY-----"
+                    "certificate": "-----BEGIN CERTIFICATE-----\nMIIFZjCCBE6gAwIBAgISA9yAjV9yT3sVRs6YFb66S3FjMA0GCSqGSIb3DQEBCwUA\nMEoxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MSMwIQYDVQQD\nExpMZXQncyBFbmNyeXB0IEF1dGhvcml0eSBYMzAeFw0xOTEwMTcxOTQ4NDlaFw0y\nMDAxMTUxOTQ4NDlaMBoxGDAWBgNVBAMMDyouZjVzZWN1cml0eS5kZTCCASIwDQYJ\nKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMSMvRfDqrxmkZDPB+FFcgAY5THirLz2\nf7/wrZXpPSbTwvGQW5gkUljdsO70OWGBJAhK4qZ90tOjsCF5iQhAVZbFKhtb+cg/\nZMnA3R0svqHzn5PvLQgj61fLTKQHRLkO0tMicC5sgHohr/haQJev5ZDRvJ3WsF9u\nv9iOSHnhgm9bk+ItjtHGMpbsu33PwsfYY74S2kbvFFTPtegsXiWX2fXUU79NSXt+\nT8uaBaGo6N9TozUATAyEQma2mjUtBUTqWwh4FxHc2SS3kTJ/1Tin/G6HSdVNFmYx\n1N3dkpHAgR6NGtQFmSPhsQOt55UFHLjFeCq3NL5NwjRigeJe2uh+PVMCAwEAAaOC\nAnQwggJwMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYB\nBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUpTsLS8qtTw0TxnsG28gCsUCk\n5JEwHwYDVR0jBBgwFoAUqEpqYwR93brm0Tm3pkVl7/Oo7KEwbwYIKwYBBQUHAQEE\nYzBhMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcC5pbnQteDMubGV0c2VuY3J5cHQu\nb3JnMC8GCCsGAQUFBzAChiNodHRwOi8vY2VydC5pbnQteDMubGV0c2VuY3J5cHQu\nb3JnLzApBgNVHREEIjAggg8qLmY1c2VjdXJpdHkuZGWCDWY1c2VjdXJpdHkuZGUw\nTAYDVR0gBEUwQzAIBgZngQwBAgEwNwYLKwYBBAGC3xMBAQEwKDAmBggrBgEFBQcC\nARYaaHR0cDovL2Nwcy5sZXRzZW5jcnlwdC5vcmcwggEFBgorBgEEAdZ5AgQCBIH2\nBIHzAPEAdwCyHgXMi6LNiiBOh2b5K7mKJSBna9r6cOeySVMt74uQXgAAAW3beu7U\nAAAEAwBIMEYCIQCAIzVi2ca8R5xn7Wva+2+aJooVbANWziLy0uvpBK4IVAIhAN8d\nIEq02t5oh6JUnCpWiQnRwaJl4FH/84/5aCzilIXEAHYAb1N2rDHwMRnYmQCkURX/\ndxUcEdkCwQApBo2yCJo32RMAAAFt23rv1QAABAMARzBFAiEAohXZCIw6bLfWJs2h\nYGWXwY4aiDiyhO7s5yHj2Nwx1rECIBZxoogqGgyiG3n1o5SQPMMSTdfEQEpiOKIr\ngDl8VmWJMA0GCSqGSIb3DQEBCwUAA4IBAQB1w+pv3sFanJqj/RjdhYpHza97zUMC\n82kGKKZOZVnVknNrJJ22YKTgbxNfUuoCTZRz+cVOIHQdCbqkX/kUzLuJWXzXFYwI\nhjjUbbHN15x/UpU/H5O0bkmtzbE0sY2tV+neX0Uv1TZaZfHTQLroU4Xj1K6fT9Ml\ngburQqZBw6aavQ3fq2dezlciPThiBibaahDMrRfdGbplBRX3RG2fnAGGX8dzRio3\n4q1wxm2zMHYYiRXyp5SCMucejNTddHK2m6qhJjDLzlTcEAro51+LMRZK7KHlS+7w\nKO6S+YuxTFgqn5lI7iEBuXL8R+WD086Kvo+sjxnWw2QtynAt4gZepe9x\n-----END CERTIFICATE-----",
+                    "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDEjL0Xw6q8ZpGQ\nzwfhRXIAGOUx4qy89n+/8K2V6T0m08LxkFuYJFJY3bDu9DlhgSQISuKmfdLTo7Ah\neYkIQFWWxSobW/nIP2TJwN0dLL6h85+T7y0II+tXy0ykB0S5DtLTInAubIB6Ia/4\nWkCXr+WQ0byd1rBfbr/Yjkh54YJvW5PiLY7RxjKW7Lt9z8LH2GO+EtpG7xRUz7Xo\nLF4ll9n11FO/TUl7fk/LmgWhqOjfU6M1AEwMhEJmtpo1LQVE6lsIeBcR3Nkkt5Ey\nf9U4p/xuh0nVTRZmMdTd3ZKRwIEejRrUBZkj4bEDreeVBRy4xXgqtzS+TcI0YoHi\nXtrofj1TAgMBAAECggEBAK/xdEvTogDoqCHC0kD702L25iRTz2GQHyeIoTrzAQTC\nx11KZlO5H+Xg/cPJ55u66LBrqJx1QcamXsJ4cwxp2rQOZvT6zoxNA0H/XXACX9vF\no/HfRqZk0QVUPZUP1Jr8BAlwaI+GHTQ297kPwYaHtK6AsaFxT4z+LMoEBCjmj8Zx\n1oNX2qRi15Luj3AHNGUdszhz5taBt0F1Ipw4nJ1IqjvWkmEMiE0cm8bz8ewtNVbe\n9HpxgVFx/xjXElFcynKYPhpERVk6265wFfJV3ub4Gm3srUy8Nt/PtsDyb8m8qvO9\nNyikeIc+djfslHPS/vnh01clQHSUbJFVjmQYDxZmCfECgYEA9kf8xmJgHL4BT9K4\nVB++FC5Slc4NRClZjBjRp8i2uKdiBoICYQTiT1Xee8Fz6JNf435U1OSityOQwg0B\n1007c3L08z1qVDujWgs0YVcfL2rVfz0P00nsIO6aZ34TgWlQzcbBq7eRLnD7suaJ\n8Gumcp5PrYV6Yy9s4vJSSa9wIhcCgYEAzE5ZHLkaipgpdAAaII3TAbZzuQh/TvA+\noXlJ1HkCyPLFShKy9WhWDofDuJWMVFCTjMZGPxZFrfMv2X/AcdNUqRpBA6vzkR1J\ngMsQjhFztZuFDupFHlVLWxHTiILndeRqPOpf+xdmzVa3148J8M2MuCrWqg/4EJQs\n0pryT2hjMCUCgYEA0pDv9SotJMXrVzVB9mMBYD3OzFhVDV8ROfAKaRr55tztucS0\nhgDoAY7YXxUipcpDZL0hiLhGyrB01wTJ+ywEVYwHFGUBIS2wV49W5JbZifAcw+IQ\nQsVkRy/aAfxQbwf9V0LFWazkS0G8YdQsQcu4jyz90M1bu6vTvCIU6v09sVcCgYEA\ntAiqgCQhXlYd2UmpvFwdv9meekQho1cTaclupNwJ9zfvYIm/x3+srds3PnYSFc53\nZ0rlZfxjZJjy5m+sDuHSLb2j4u9oj8zGE8ddjEOWukcUZoNMayFwaQz5Yccw3fNt\nJsbF04bYoUO0dzBl6xvG0Bd32J5/02QvZ1sBAbaUCT0CgYArehcUlp+4N1jaTYpC\nvjBNI5hNEz4X+ogDAguz7CYyRFJYCPtvNDbkWh+BtHDwD3BcSGCtwkzHFhGzijE+\nlYONNlszU1mHtcHXk4wOI6Vu/0IR9LGtc2nj4DEZ2jM4nN1RVvFJA288bEvrgmOa\nvQOguQ5HVb17xsV3wnG4tNX05Q==\n-----END PRIVATE KEY-----"
                 },
                 "dc7_CA_cer": {
                     "class": "Certificate",
                     "remark": "dc7.h.l",
                     "certificate": "-----BEGIN CERTIFICATE-----\nMIIDZTCCAk2gAwIBAgIQamqhyzpRcrlMpUa1w7D9FzANBgkqhkiG9w0BAQUFADA5\nMREwDwYKCZImiZPyLGQBGRYBbDERMA8GCgmSJomT8ixkARkWAWgxETAPBgNVBAMT\nCGgtREM3LUNBMB4XDTE0MTAxMTAwNTg1M1oXDTI0MTAxMTAxMDg1M1owOTERMA8G\nCgmSJomT8ixkARkWAWwxETAPBgoJkiaJk/IsZAEZFgFoMREwDwYDVQQDEwhoLURD\nNy1DQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALTirnGWJukgP0iw\naR5SYdeI8263Ifgp2YLXVrQcyKvMglgw3fQ6ZY+LoWO4KXOL9wSMGaEJCez8JZnt\n4iT7gkWd+xGvzgBEBo5pNk2sZFX6B149bzlsyuzr0sc+2w0A+At3drtUyWhQPIxm\ngiChSwxfzcYJGd98vrmH1Cb1qQyqNaxOFBy3qiKnpNVcIt/JvT9urJ+7DbHh71we\nltrpK248GAboZAl6JJ9vDWGC6h/RgeGOledUl6UVGsf3jHTLZo1nsgG+g8iQ1tbf\n0cd1dYkJ/faCGFMy43mzJgcp+gXmasXcRmbhRLv0P8fW6YgzZx3A/wOE9PunoV2n\nAr5VNCcCAwEAAaNpMGcwEwYJKwYBBAGCNxQCBAYeBABDAEEwDgYDVR0PAQH/BAQD\nAgGGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFI5XlO4uocbJWCoeeiSjlXFS\n3PMgMBAGCSsGAQQBgjcVAQQDAgEAMA0GCSqGSIb3DQEBBQUAA4IBAQAyEmGEh+y+\nBpAusNJ5/ojLyXRebDcNzRza7V9sQBujfHSdbFEwBHSPrTX7DE326zHrNuay47jg\nX8dJUniOL45RY4URi1Z86+wAK8nsQf0x+cIWDDtBq6O6LykJh9YXn/ZwBVrZjj8C\nyLIRKMbb0np92BMGlU0GXqXdFhm2cGzDHmQAyVchH/9xcWhv6ipfbmdndgqe8vEl\nx3IMkx1VZYnaQCQRZoSQ8lshtVCF+Eyx4fhZw8LLgn/sOZ2GcehP9sG68cCZqLSn\nhgPbprRW39XkpAMrrVN0qfJDSKKo0itIbFo5jLwV0JSvRup43Xe7Qq5LowMeSWg4\niD2jZ/pS824j\n-----END CERTIFICATE-----"
                 },
+                "Lets_Encrypt_Authority_X3": {
+                    "class": "Certificate",
+                    "remark": "Lets_Encrypt_Authority_X3",
+                    "certificate": "-----BEGIN CERTIFICATE-----\nMIIEkjCCA3qgAwIBAgIQCgFBQgAAAVOFc2oLheynCDANBgkqhkiG9w0BAQsFADA/\nMSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\nDkRTVCBSb290IENBIFgzMB4XDTE2MDMxNzE2NDA0NloXDTIxMDMxNzE2NDA0Nlow\nSjELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUxldCdzIEVuY3J5cHQxIzAhBgNVBAMT\nGkxldCdzIEVuY3J5cHQgQXV0aG9yaXR5IFgzMIIBIjANBgkqhkiG9w0BAQEFAAOC\nAQ8AMIIBCgKCAQEAnNMM8FrlLke3cl03g7NoYzDq1zUmGSXhvb418XCSL7e4S0EF\nq6meNQhY7LEqxGiHC6PjdeTm86dicbp5gWAf15Gan/PQeGdxyGkOlZHP/uaZ6WA8\nSMx+yk13EiSdRxta67nsHjcAHJyse6cF6s5K671B5TaYucv9bTyWaN8jKkKQDIZ0\nZ8h/pZq4UmEUEz9l6YKHy9v6Dlb2honzhT+Xhq+w3Brvaw2VFn3EK6BlspkENnWA\na6xK8xuQSXgvopZPKiAlKQTGdMDQMc2PMTiVFrqoM7hD8bEfwzB/onkxEz0tNvjj\n/PIzark5McWvxI0NHWQWM6r6hCm21AvA2H3DkwIDAQABo4IBfTCCAXkwEgYDVR0T\nAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwfwYIKwYBBQUHAQEEczBxMDIG\nCCsGAQUFBzABhiZodHRwOi8vaXNyZy50cnVzdGlkLm9jc3AuaWRlbnRydXN0LmNv\nbTA7BggrBgEFBQcwAoYvaHR0cDovL2FwcHMuaWRlbnRydXN0LmNvbS9yb290cy9k\nc3Ryb290Y2F4My5wN2MwHwYDVR0jBBgwFoAUxKexpHsscfrb4UuQdf/EFWCFiRAw\nVAYDVR0gBE0wSzAIBgZngQwBAgEwPwYLKwYBBAGC3xMBAQEwMDAuBggrBgEFBQcC\nARYiaHR0cDovL2Nwcy5yb290LXgxLmxldHNlbmNyeXB0Lm9yZzA8BgNVHR8ENTAz\nMDGgL6AthitodHRwOi8vY3JsLmlkZW50cnVzdC5jb20vRFNUUk9PVENBWDNDUkwu\nY3JsMB0GA1UdDgQWBBSoSmpjBH3duubRObemRWXv86jsoTANBgkqhkiG9w0BAQsF\nAAOCAQEA3TPXEfNjWDjdGBX7CVW+dla5cEilaUcne8IkCJLxWh9KEik3JHRRHGJo\nuM2VcGfl96S8TihRzZvoroed6ti6WqEBmtzw3Wodatg+VyOeph4EYpr/1wXKtx8/\nwApIvJSwtmVi4MFU5aMqrSDE6ea73Mj2tcMyo5jMd6jmeWUHK8so/joWUoHOUgwu\nX4Po1QYz+3dszkDqMp4fklxBwXRsW10KXzPMTZ+sOPAveyxindmjkW8lGy+QsRlG\nPfZ+G6Z6h7mjem0Y+iWlkYcV4PIWL1iwBi8saCbGS5jN2p8M+X+Q7UNKEkROb3N6\nKOqkqm57TH2H3eDJAkSnh6/DNFu0Qg==\n-----END CERTIFICATE-----"
+                },
+                "wildcard_f5security_de_cer_key": {
+                    "class": "Certificate",
+                    "remark": "wildcard.f5security.de",
+                    "certificate": "-----BEGIN CERTIFICATE-----\nMIIFZjCCBE6gAwIBAgISA9yAjV9yT3sVRs6YFb66S3FjMA0GCSqGSIb3DQEBCwUA\nMEoxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MSMwIQYDVQQD\nExpMZXQncyBFbmNyeXB0IEF1dGhvcml0eSBYMzAeFw0xOTEwMTcxOTQ4NDlaFw0y\nMDAxMTUxOTQ4NDlaMBoxGDAWBgNVBAMMDyouZjVzZWN1cml0eS5kZTCCASIwDQYJ\nKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMSMvRfDqrxmkZDPB+FFcgAY5THirLz2\nf7/wrZXpPSbTwvGQW5gkUljdsO70OWGBJAhK4qZ90tOjsCF5iQhAVZbFKhtb+cg/\nZMnA3R0svqHzn5PvLQgj61fLTKQHRLkO0tMicC5sgHohr/haQJev5ZDRvJ3WsF9u\nv9iOSHnhgm9bk+ItjtHGMpbsu33PwsfYY74S2kbvFFTPtegsXiWX2fXUU79NSXt+\nT8uaBaGo6N9TozUATAyEQma2mjUtBUTqWwh4FxHc2SS3kTJ/1Tin/G6HSdVNFmYx\n1N3dkpHAgR6NGtQFmSPhsQOt55UFHLjFeCq3NL5NwjRigeJe2uh+PVMCAwEAAaOC\nAnQwggJwMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYB\nBQUHAwIwDAYDVR0TAQH/BAIwADAdBgNVHQ4EFgQUpTsLS8qtTw0TxnsG28gCsUCk\n5JEwHwYDVR0jBBgwFoAUqEpqYwR93brm0Tm3pkVl7/Oo7KEwbwYIKwYBBQUHAQEE\nYzBhMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcC5pbnQteDMubGV0c2VuY3J5cHQu\nb3JnMC8GCCsGAQUFBzAChiNodHRwOi8vY2VydC5pbnQteDMubGV0c2VuY3J5cHQu\nb3JnLzApBgNVHREEIjAggg8qLmY1c2VjdXJpdHkuZGWCDWY1c2VjdXJpdHkuZGUw\nTAYDVR0gBEUwQzAIBgZngQwBAgEwNwYLKwYBBAGC3xMBAQEwKDAmBggrBgEFBQcC\nARYaaHR0cDovL2Nwcy5sZXRzZW5jcnlwdC5vcmcwggEFBgorBgEEAdZ5AgQCBIH2\nBIHzAPEAdwCyHgXMi6LNiiBOh2b5K7mKJSBna9r6cOeySVMt74uQXgAAAW3beu7U\nAAAEAwBIMEYCIQCAIzVi2ca8R5xn7Wva+2+aJooVbANWziLy0uvpBK4IVAIhAN8d\nIEq02t5oh6JUnCpWiQnRwaJl4FH/84/5aCzilIXEAHYAb1N2rDHwMRnYmQCkURX/\ndxUcEdkCwQApBo2yCJo32RMAAAFt23rv1QAABAMARzBFAiEAohXZCIw6bLfWJs2h\nYGWXwY4aiDiyhO7s5yHj2Nwx1rECIBZxoogqGgyiG3n1o5SQPMMSTdfEQEpiOKIr\ngDl8VmWJMA0GCSqGSIb3DQEBCwUAA4IBAQB1w+pv3sFanJqj/RjdhYpHza97zUMC\n82kGKKZOZVnVknNrJJ22YKTgbxNfUuoCTZRz+cVOIHQdCbqkX/kUzLuJWXzXFYwI\nhjjUbbHN15x/UpU/H5O0bkmtzbE0sY2tV+neX0Uv1TZaZfHTQLroU4Xj1K6fT9Ml\ngburQqZBw6aavQ3fq2dezlciPThiBibaahDMrRfdGbplBRX3RG2fnAGGX8dzRio3\n4q1wxm2zMHYYiRXyp5SCMucejNTddHK2m6qhJjDLzlTcEAro51+LMRZK7KHlS+7w\nKO6S+YuxTFgqn5lI7iEBuXL8R+WD086Kvo+sjxnWw2QtynAt4gZepe9x\n-----END CERTIFICATE-----",
+                    "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDEjL0Xw6q8ZpGQ\nzwfhRXIAGOUx4qy89n+/8K2V6T0m08LxkFuYJFJY3bDu9DlhgSQISuKmfdLTo7Ah\neYkIQFWWxSobW/nIP2TJwN0dLL6h85+T7y0II+tXy0ykB0S5DtLTInAubIB6Ia/4\nWkCXr+WQ0byd1rBfbr/Yjkh54YJvW5PiLY7RxjKW7Lt9z8LH2GO+EtpG7xRUz7Xo\nLF4ll9n11FO/TUl7fk/LmgWhqOjfU6M1AEwMhEJmtpo1LQVE6lsIeBcR3Nkkt5Ey\nf9U4p/xuh0nVTRZmMdTd3ZKRwIEejRrUBZkj4bEDreeVBRy4xXgqtzS+TcI0YoHi\nXtrofj1TAgMBAAECggEBAK/xdEvTogDoqCHC0kD702L25iRTz2GQHyeIoTrzAQTC\nx11KZlO5H+Xg/cPJ55u66LBrqJx1QcamXsJ4cwxp2rQOZvT6zoxNA0H/XXACX9vF\no/HfRqZk0QVUPZUP1Jr8BAlwaI+GHTQ297kPwYaHtK6AsaFxT4z+LMoEBCjmj8Zx\n1oNX2qRi15Luj3AHNGUdszhz5taBt0F1Ipw4nJ1IqjvWkmEMiE0cm8bz8ewtNVbe\n9HpxgVFx/xjXElFcynKYPhpERVk6265wFfJV3ub4Gm3srUy8Nt/PtsDyb8m8qvO9\nNyikeIc+djfslHPS/vnh01clQHSUbJFVjmQYDxZmCfECgYEA9kf8xmJgHL4BT9K4\nVB++FC5Slc4NRClZjBjRp8i2uKdiBoICYQTiT1Xee8Fz6JNf435U1OSityOQwg0B\n1007c3L08z1qVDujWgs0YVcfL2rVfz0P00nsIO6aZ34TgWlQzcbBq7eRLnD7suaJ\n8Gumcp5PrYV6Yy9s4vJSSa9wIhcCgYEAzE5ZHLkaipgpdAAaII3TAbZzuQh/TvA+\noXlJ1HkCyPLFShKy9WhWDofDuJWMVFCTjMZGPxZFrfMv2X/AcdNUqRpBA6vzkR1J\ngMsQjhFztZuFDupFHlVLWxHTiILndeRqPOpf+xdmzVa3148J8M2MuCrWqg/4EJQs\n0pryT2hjMCUCgYEA0pDv9SotJMXrVzVB9mMBYD3OzFhVDV8ROfAKaRr55tztucS0\nhgDoAY7YXxUipcpDZL0hiLhGyrB01wTJ+ywEVYwHFGUBIS2wV49W5JbZifAcw+IQ\nQsVkRy/aAfxQbwf9V0LFWazkS0G8YdQsQcu4jyz90M1bu6vTvCIU6v09sVcCgYEA\ntAiqgCQhXlYd2UmpvFwdv9meekQho1cTaclupNwJ9zfvYIm/x3+srds3PnYSFc53\nZ0rlZfxjZJjy5m+sDuHSLb2j4u9oj8zGE8ddjEOWukcUZoNMayFwaQz5Yccw3fNt\nJsbF04bYoUO0dzBl6xvG0Bd32J5/02QvZ1sBAbaUCT0CgYArehcUlp+4N1jaTYpC\nvjBNI5hNEz4X+ogDAguz7CYyRFJYCPtvNDbkWh+BtHDwD3BcSGCtwkzHFhGzijE+\nlYONNlszU1mHtcHXk4wOI6Vu/0IR9LGtc2nj4DEZ2jM4nN1RVvFJA288bEvrgmOa\nvQOguQ5HVb17xsV3wnG4tNX05Q==\n-----END PRIVATE KEY-----",
+                    "chainCA": "-----BEGIN CERTIFICATE-----\nMIIEkjCCA3qgAwIBAgIQCgFBQgAAAVOFc2oLheynCDANBgkqhkiG9w0BAQsFADA/\nMSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\nDkRTVCBSb290IENBIFgzMB4XDTE2MDMxNzE2NDA0NloXDTIxMDMxNzE2NDA0Nlow\nSjELMAkGA1UEBhMCVVMxFjAUBgNVBAoTDUxldCdzIEVuY3J5cHQxIzAhBgNVBAMT\nGkxldCdzIEVuY3J5cHQgQXV0aG9yaXR5IFgzMIIBIjANBgkqhkiG9w0BAQEFAAOC\nAQ8AMIIBCgKCAQEAnNMM8FrlLke3cl03g7NoYzDq1zUmGSXhvb418XCSL7e4S0EF\nq6meNQhY7LEqxGiHC6PjdeTm86dicbp5gWAf15Gan/PQeGdxyGkOlZHP/uaZ6WA8\nSMx+yk13EiSdRxta67nsHjcAHJyse6cF6s5K671B5TaYucv9bTyWaN8jKkKQDIZ0\nZ8h/pZq4UmEUEz9l6YKHy9v6Dlb2honzhT+Xhq+w3Brvaw2VFn3EK6BlspkENnWA\na6xK8xuQSXgvopZPKiAlKQTGdMDQMc2PMTiVFrqoM7hD8bEfwzB/onkxEz0tNvjj\n/PIzark5McWvxI0NHWQWM6r6hCm21AvA2H3DkwIDAQABo4IBfTCCAXkwEgYDVR0T\nAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwfwYIKwYBBQUHAQEEczBxMDIG\nCCsGAQUFBzABhiZodHRwOi8vaXNyZy50cnVzdGlkLm9jc3AuaWRlbnRydXN0LmNv\nbTA7BggrBgEFBQcwAoYvaHR0cDovL2FwcHMuaWRlbnRydXN0LmNvbS9yb290cy9k\nc3Ryb290Y2F4My5wN2MwHwYDVR0jBBgwFoAUxKexpHsscfrb4UuQdf/EFWCFiRAw\nVAYDVR0gBE0wSzAIBgZngQwBAgEwPwYLKwYBBAGC3xMBAQEwMDAuBggrBgEFBQcC\nARYiaHR0cDovL2Nwcy5yb290LXgxLmxldHNlbmNyeXB0Lm9yZzA8BgNVHR8ENTAz\nMDGgL6AthitodHRwOi8vY3JsLmlkZW50cnVzdC5jb20vRFNUUk9PVENBWDNDUkwu\nY3JsMB0GA1UdDgQWBBSoSmpjBH3duubRObemRWXv86jsoTANBgkqhkiG9w0BAQsF\nAAOCAQEA3TPXEfNjWDjdGBX7CVW+dla5cEilaUcne8IkCJLxWh9KEik3JHRRHGJo\nuM2VcGfl96S8TihRzZvoroed6ti6WqEBmtzw3Wodatg+VyOeph4EYpr/1wXKtx8/\nwApIvJSwtmVi4MFU5aMqrSDE6ea73Mj2tcMyo5jMd6jmeWUHK8so/joWUoHOUgwu\nX4Po1QYz+3dszkDqMp4fklxBwXRsW10KXzPMTZ+sOPAveyxindmjkW8lGy+QsRlG\nPfZ+G6Z6h7mjem0Y+iWlkYcV4PIWL1iwBi8saCbGS5jN2p8M+X+Q7UNKEkROb3N6\nKOqkqm57TH2H3eDJAkSnh6/DNFu0Qg==\n-----END CERTIFICATE-----"
+                },
                 "wildcard_home_lab_SSL_pro": {
                     "class": "TLS_Server",
                     "certificates": [
                         {
                             "certificate": "wildcard_home_lab_cer_key"
+                        }
+                    ]
+                },
+                "wildcard_f5security_de_SSL_pro": {
+                    "class": "TLS_Server",
+                    "certificates": [
+                        {
+                            "certificate": "wildcard_f5security_de_cer_key"
                         }
                     ]
                 },
@@ -125,6 +145,7 @@
                         "localStorage": false,
                         "remoteStorage": "splunk",
                         "protocol": "tcp",
+                        "responseLogging": "illegal",
                         "servers": [
                             {
                                 "address": "255.255.255.254",
@@ -185,7 +206,7 @@
                         {
                             "servicePort": 80,
                             "serverAddresses": [
-                                "10.0.0.152"
+                                "10.0.4.48"
                             ],
                             "shareNodes": true
                         }
@@ -215,7 +236,7 @@
                     "snat": "auto",
                     "pool": "webPool",
                     "serverTLS": {
-                        "bigip": "/Common/Shared/wildcard_home_lab_SSL_pro"
+                        "bigip": "/Common/Shared/wildcard_f5security_de_SSL_pro"
                     },
                     "clientTLS": {
                         "bigip": "/Common/serverssl"
@@ -230,11 +251,13 @@
                 "AWS_APIGW_local_rule": {
                     "remark": "Only required when TS is a local listener",
                     "class": "iRule",
-                    "iRule": "when HTTP_REQUEST {\n    HTTP::header host xpm9db9xf0.execute-api.us-east-1.amazonaws.com\n}"
+                    "iRule": {
+                        "url": "https://raw.githubusercontent.com/ab-gmbh/F5cicd/master/irules/WAF_API_GW.irule"
+                    }
                 },
                 "AWS_APIGW_waf_pol": {
                     "class": "WAF_Policy",
-                    "url": "https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/owasp_ready_template/owasp-no-auto-tune-v1.1.xml",
+                    "url": "https://raw.githubusercontent.com/ab-gmbh/F5cicd/master/AWS/Apps_AWS_APIGW_waf_pol__2019-10-25_11-37-23__ip-10-0-1-244.ec2.internal.xml",
                     "ignoreChanges": true
                 },
                 "webPool": {
@@ -245,7 +268,7 @@
                         }
                     ],
                     "members": [
-                        {   
+                        {
                             "addressDiscovery": "fqdn",
                             "servicePort": 443,
                             "autoPopulate": true,
